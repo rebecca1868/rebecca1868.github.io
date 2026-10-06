@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>REBECCA CHU｜平面設計作品集</title>
+<meta name="description" content="REBECCA CHU 平面設計作品集：海報、DM、書籍封面與社群視覺。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f4f2;
+    --ink: #1d1d1b;
+    --muted: #8a8780;
+    --line: #dcdad5;
+    --gutter: clamp(16px, 5vw, 72px);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: "Inter", "Noto Sans TC", sans-serif; line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  img { display: block; width: 100%; height: auto; }
+
+  header {
+    position: sticky; top: 0; z-index: 10;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px var(--gutter); font-size: 13px; letter-spacing: .12em;
+    background: rgba(245,244,242,.88); backdrop-filter: blur(10px);
+  }
+  header .logo { font-weight: 600; }
+  header nav { display: flex; gap: 32px; }
+
+  /* 開場標題 */
+  .intro { padding: clamp(80px, 14vw, 180px) var(--gutter) clamp(64px, 9vw, 120px); max-width: 1440px; margin: 0 auto; }
+  .intro h1 {
+    font-family: "Inter", sans-serif; font-weight: 300;
+    font-size: clamp(40px, 8vw, 112px); line-height: 1.02; letter-spacing: .02em;
+  }
+  .intro p { margin-top: 28px; font-family: "Noto Sans TC"; font-size: 15px; color: var(--muted); letter-spacing: .08em; }
+
+  /* 作品列表 */
+  .works { padding: 0 var(--gutter) 120px; max-width: 1440px; margin: 0 auto; }
+  .works-title { display: flex; align-items: baseline; gap: 16px; font-size: 13px; letter-spacing: .2em; padding-bottom: 20px; border-bottom: 1px solid var(--ink); margin-bottom: 40px; }
+  .works-title b { font-family: "Noto Sans TC"; font-weight: 500; font-size: 15px; letter-spacing: .1em; }
+  .works-title span { color: var(--muted); }
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 56px 40px; }
+  .card .thumb { overflow: hidden; background: #ddd; }
+  .card .thumb img { aspect-ratio: 4 / 3; object-fit: cover; transition: transform 1.2s cubic-bezier(.2,.7,.2,1); }
+  .card:hover .thumb img { transform: scale(1.04); }
+  .card h2 { margin-top: 18px; font-family: "Noto Sans TC"; font-weight: 500; font-size: 18px; letter-spacing: .04em; }
+  .card h2 span { font-family: "Inter"; font-weight: 300; color: var(--muted); font-size: 14px; letter-spacing: .1em; margin-left: 10px; }
+  .card p { font-size: 13px; color: var(--muted); font-family: "Noto Sans TC"; }
+  .soon { aspect-ratio: 4 / 3; border: 1px dashed var(--line); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 13px; letter-spacing: .2em; }
+
+  footer { padding: 32px var(--gutter); font-size: 12px; color: var(--muted); letter-spacing: .1em; border-top: 1px solid var(--line); }
+
+  @media (max-width: 760px) {
+    header { padding: 16px var(--gutter); font-size: 12px; }
+    header nav .en { display: none; }
+    .grid { grid-template-columns: 1fr; gap: 40px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="./">REBECCA CHU</a>
+  <nav><a href="#works">作品<span class="en"> Works</span></a></nav>
+</header>
+
+<section class="intro">
+  <h1>REBECCA CHU</h1>
+  <p>平面設計作品集　海報・DM・書籍封面・社群視覺</p>
+</section>
+
+<section class="works" id="works">
+  <div class="works-title"><b>作品</b><span>WORKS</span></div>
+  <div class="grid">
+    <a class="card" href="critical-facts.html">
+      <div class="thumb"><img src="works/critical-facts/hero.jpg" alt="關鍵事實 Critical Facts"></div>
+      <h2>關鍵事實<span>CRITICAL FACTS</span></h2>
+      <p>海報／活動視覺　2024</p>
+    </a>
+    <div class="soon">MORE WORKS COMING SOON</div>
+  </div>
+</section>
+
+<footer>© 2026 REBECCA CHU</footer>
+</body>
+</html>
