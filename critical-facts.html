@@ -7,198 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #f5f4f2;
-    --ink: #1d1d1b;
-    --muted: #8a8780;
-    --line: #dcdad5;
-    --placeholder: #e7e5e1;
-    --gutter: clamp(16px, 5vw, 72px);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    color: var(--ink);
-    font-family: "Inter", "Noto Sans TC", sans-serif;
-    font-weight: 400;
-    line-height: 1.8;
-    -webkit-font-smoothing: antialiased;
-  }
-  a { color: inherit; text-decoration: none; }
-  img { display: block; width: 100%; height: auto; }
-
-  /* ---------- 頂部導覽列 ---------- */
-  header {
-    position: fixed; inset: 0 0 auto 0; z-index: 10;
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 20px var(--gutter);
-    font-size: 13px; letter-spacing: .12em;
-    mix-blend-mode: difference; color: #fff;
-  }
-  header { transition: background .3s, color .3s; }
-  header.solid {
-    mix-blend-mode: normal; color: var(--ink);
-    background: rgba(245,244,242,.88); backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--line);
-  }
-  header .logo { font-weight: 600; }
-  header nav { display: flex; gap: 32px; }
-  header nav a { opacity: .85; transition: opacity .2s; }
-  header nav a:hover { opacity: 1; }
-
-  /* ---------- 刊頭 Mockup ---------- */
-  .hero { width: 100%; overflow: hidden; background: #cfcfcf; }
-  .hero img {
-    aspect-ratio: 2400 / 1017; object-fit: cover;
-    animation: heroIn 1.4s cubic-bezier(.2,.7,.2,1) both;
-  }
-  @keyframes heroIn { from { opacity: 0; transform: scale(1.04); } to { opacity: 1; transform: none; } }
-  .scroll-hint {
-    text-align: center; font-size: 11px; letter-spacing: .3em; color: var(--muted);
-    padding-top: 28px;
-  }
-  .scroll-hint::after {
-    content: ""; display: block; width: 1px; height: 40px; margin: 12px auto 0;
-    background: var(--muted); animation: drip 2s ease-in-out infinite;
-    transform-origin: top;
-  }
-  @keyframes drip { 0%{transform:scaleY(0)} 50%{transform:scaleY(1)} 100%{transform:scaleY(0);transform-origin:bottom} }
-
-  /* ---------- 文字介紹（三種排法） ---------- */
-  .intro { padding: 96px var(--gutter) 120px; max-width: 1280px; margin: 0 auto; }
-  .intro h1 { font-family: "Noto Sans TC", sans-serif; font-weight: 700; font-size: clamp(32px, 4.5vw, 56px); line-height: 1.2; letter-spacing: .04em; }
-  .intro .en { display: block; font-family: "Inter", sans-serif; font-weight: 300; font-size: .42em; letter-spacing: .2em; color: var(--muted); margin-top: 10px; text-transform: uppercase; }
-  .intro .subtitle { font-family: "Noto Sans TC"; font-size: 15px; color: var(--muted); margin-top: 20px; }
-  .meta { list-style: none; font-size: 14px; margin-bottom: 36px; }
-  .meta li { display: flex; gap: 20px; padding: 4px 0; }
-  .meta span:first-child { color: var(--muted); min-width: 4.5em; font-family: "Noto Sans TC"; }
-  .desc { font-family: "Noto Sans TC", sans-serif; font-weight: 300; font-size: 16px; line-height: 2.1; color: #3b3a37; }
-  .desc p + p { margin-top: 1.2em; }
-  .note { color: #b4762f; font-size: 13px; }
-
-  /* A：左右兩欄 */
-  .layout-a .intro-grid { display: grid; grid-template-columns: 5fr 6fr; gap: 64px 96px; }
-  .layout-a .meta { margin-top: 40px; }
-  /* B：置中單欄 */
-  .layout-b .intro-grid { display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 640px; margin: 0 auto; }
-  .layout-b .meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 0; margin: 28px 0 40px; }
-  .layout-b .meta li { padding: 0 14px; gap: 8px; }
-  .layout-b .meta li + li { border-left: 1px solid var(--line); }
-  .layout-b .meta span:first-child { min-width: 0; }
-  /* C：資訊表格＋說明 */
-  .layout-c .intro-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 96px; }
-  .layout-c .titles { grid-column: 1 / -1; padding-bottom: 40px; margin-bottom: 40px; border-bottom: 1px solid var(--ink); }
-  .layout-c .side { display: contents; }
-
-  /* ---------- 細節與延伸應用 ---------- */
-  section.block { padding: 0 var(--gutter) 120px; max-width: 1280px; margin: 0 auto; }
-  .block-title { display: flex; align-items: baseline; gap: 16px; font-size: 13px; letter-spacing: .2em; margin-bottom: 32px; }
-  .block-title b { font-family: "Noto Sans TC"; font-weight: 500; letter-spacing: .1em; font-size: 15px; }
-  .block-title span { color: var(--muted); }
-  .ph {
-    background: var(--placeholder); border-radius: 2px;
-    display: flex; align-items: center; justify-content: center; text-align: center;
-    color: var(--muted); font-family: "Noto Sans TC"; font-size: 14px; line-height: 1.6;
-  }
-  figcaption { font-size: 13px; color: var(--muted); margin-top: 12px; font-family: "Noto Sans TC"; letter-spacing: .04em; }
-
-  /* 作品細節：左邊平面原圖（紙張陰影），右邊兩張局部 */
-  .details { display: grid; grid-template-columns: 2fr 3fr; gap: 32px; align-items: start; }
-  .paper {
-    padding: 32px; background: #e9e7e3;
-  }
-  .paper img {
-    box-shadow: 0 1px 2px rgba(0,0,0,.18), 0 12px 28px -8px rgba(0,0,0,.35), 0 32px 60px -20px rgba(0,0,0,.25);
-  }
-  .details .stack { display: grid; gap: 32px; }
-  .crop { overflow: hidden; }
-  .crop img { transition: transform 1.2s cubic-bezier(.2,.7,.2,1); }
-  .crop:hover img { transform: scale(1.06); }
-  .wide-crop { margin-top: 32px; }
-
-  /* 延伸應用：橫式螢幕圖＋手機 */
-  .screens { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
-  .screens img { box-shadow: 0 16px 40px -16px rgba(0,0,0,.4); }
-  /* 同一區塊內的滿版圖片連續相接，不留空白 */
-  .overlay + .overlay { margin-top: 0; }
-
-  /* 圖說壓在圖片左下角：深色圖用白字，淺色圖加 on-light 用深色字 */
-  .overlay { position: relative; }
-  .overlay figcaption {
-    position: absolute; left: clamp(16px, 2.5vw, 32px); bottom: clamp(14px, 2.2vw, 28px); margin: 0;
-    color: #fff; font-size: clamp(12px, 1.1vw, 14px); letter-spacing: .12em;
-    text-shadow: 0 1px 8px rgba(0,0,0,.35);
-  }
-  .overlay.on-light figcaption { color: var(--ink); text-shadow: none; }
-  .phones {
-    display: flex; justify-content: center; align-items: flex-end; gap: clamp(16px, 4vw, 56px);
-    margin-top: 72px; padding: 72px 24px; background: #e9e7e3;
-  }
-  .phone { width: min(240px, 28%); text-align: center; }
-  .phone .device {
-    position: relative; aspect-ratio: 9 / 16; overflow: hidden;
-    border: 8px solid #141414; border-radius: 30px; background: #000;
-    box-shadow: 0 2px 0 1px #3a3a3a inset, 0 24px 50px -18px rgba(0,0,0,.55);
-  }
-  .phone .device img, .phone .device video { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .phone.center { width: min(270px, 32%); }
-  .phone.center .device { transform: translateY(-24px); }
-  .phone.center figcaption { transform: translateY(-24px); }
-
-  /* 滑入時淡入 */
-  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .9s ease, transform .9s ease; }
-  .reveal.in { opacity: 1; transform: none; }
-
-  /* ---------- 上一件／下一件 ---------- */
-  .pager { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--line); }
-  .pager a { padding: 48px var(--gutter); transition: background .3s; }
-  .pager a:hover { background: #ecebe8; }
-  .pager a + a { text-align: right; border-left: 1px solid var(--line); }
-  .pager small { display: block; font-size: 12px; letter-spacing: .2em; color: var(--muted); }
-  .pager strong { font-family: "Noto Sans TC"; font-weight: 500; font-size: 20px; }
-  footer { padding: 32px var(--gutter); font-size: 12px; color: var(--muted); letter-spacing: .1em; border-top: 1px solid var(--line); }
-
-  /* ---------- 預覽用：排版切換器（正式版會拿掉） ---------- */
-  .switcher {
-    position: fixed; right: 20px; bottom: 20px; z-index: 20;
-    background: #fff; border: 1px solid var(--line); border-radius: 10px;
-    padding: 12px 14px; box-shadow: 0 6px 24px rgba(0,0,0,.08);
-    font-family: "Noto Sans TC"; font-size: 12px;
-  }
-  .switcher p { color: var(--muted); margin-bottom: 8px; }
-  .switcher button {
-    font: inherit; cursor: pointer; border: 1px solid var(--line); background: #fff;
-    padding: 6px 12px; border-radius: 6px; margin-right: 4px;
-  }
-  .switcher button.on { background: var(--ink); color: #fff; border-color: var(--ink); }
-
-  /* ---------- 手機版 ---------- */
-  @media (max-width: 760px) {
-    header { padding: 16px var(--gutter); font-size: 12px; }
-    header .logo { white-space: nowrap; }
-    header nav { gap: 16px; }
-    header nav .en { display: none; }
-    .switcher { right: 12px; bottom: 12px; padding: 8px 10px; }
-    .switcher p { display: none; }
-    .hero img { aspect-ratio: 4 / 3; object-position: 48% center; }
-    .intro { padding: 64px var(--gutter) 80px; }
-    .layout-a .intro-grid, .layout-c .intro-grid { grid-template-columns: 1fr; gap: 40px; }
-    .layout-c .meta { margin-bottom: 40px; }
-    .details, .screens { grid-template-columns: 1fr; gap: 24px; }
-    .paper { padding: 20px; }
-    .wide-crop { margin-top: 24px; }
-    .phones { margin-top: 40px; padding: 40px 12px; gap: 10px; }
-    .phone, .phone.center { width: 31%; }
-    .phone .device { border-width: 4px; border-radius: 16px; }
-    .phone.center .device, .phone.center figcaption { transform: none; }
-    section.block { padding-bottom: 80px; }
-    .pager a { padding: 32px var(--gutter); }
-    .pager strong { font-size: 16px; }
-  }
-</style>
+<link rel="stylesheet" href="css/project.css">
 </head>
-<body class="layout-a">
+<body style="--hero-ratio: 2400 / 1017">
 
 <header>
   <a class="logo" href="./">REBECCA CHU</a>
@@ -207,7 +18,7 @@
 
 <!-- 刊頭：Mockup 圖 -->
 <div class="hero">
-  <img src="works/critical-facts/hero.jpg" alt="關鍵事實海報 Mockup">
+  <img src="works/critical-facts/hero.jpg" srcset="works/critical-facts/hero-sm.jpg 1200w, works/critical-facts/hero.jpg 2400w" sizes="100vw" width="2400" height="1017" fetchpriority="high" alt="關鍵事實海報 Mockup">
 </div>
 <div class="scroll-hint">SCROLL</div>
 
@@ -236,11 +47,11 @@
 <!-- 作品細節：不放標題與圖說，讓圖片直接接在文字介紹後面 -->
 <section class="block">
   <figure class="reveal">
-    <img src="works/critical-facts/detail-mockup.jpg" alt="關鍵事實海報細節示意" loading="lazy">
+    <img src="works/critical-facts/detail-mockup.jpg" srcset="works/critical-facts/detail-mockup-sm.jpg 1000w, works/critical-facts/detail-mockup.jpg 2000w" sizes="(max-width: 1280px) 90vw, 1136px" width="2000" height="1335" decoding="async" alt="關鍵事實海報細節示意" loading="lazy">
   </figure>
 </section>
 
-<!-- 舊版作品細節（平面原圖＋局部裁切）：暫時隱藏，等新的細節圖上傳後再開啟（刪掉這行和區塊結尾的註解符號即可）
+<!-- 舊版作品細節（平面原圖＋局部裁切）：暫時隱藏，需要時刪掉這行和區塊結尾的註解符號即可
 <section class="block">
   <div class="block-title reveal"><b>作品細節</b><span>DETAILS</span></div>
   <div class="details">
@@ -270,7 +81,7 @@
 <section class="block">
   <div class="block-title reveal"><b>延伸應用</b><span>APPLICATIONS</span></div>
   <figure class="overlay reveal">
-    <img src="works/critical-facts/ext-stage.jpg" alt="活動現場主舞台螢幕示意" loading="lazy">
+    <img src="works/critical-facts/ext-stage.jpg" srcset="works/critical-facts/ext-stage-sm.jpg 1000w, works/critical-facts/ext-stage.jpg 2000w" sizes="(max-width: 1280px) 90vw, 1136px" width="2000" height="1143" decoding="async" alt="活動現場主舞台螢幕示意" loading="lazy">
     <figcaption>主舞台螢幕　16:9</figcaption>
   </figure>
   <!-- 平面 16:9 底圖：目前改用舞台 Mockup 呈現，需要時可恢復
@@ -279,37 +90,19 @@
     <figure class="reveal"><img src="works/critical-facts/ext-b-wide.jpg" alt="活動延伸底圖 B 16:9" loading="lazy"><figcaption>活動延伸底圖 B　16:9</figcaption></figure>
   </div>
   -->
-  <figure class="phones-mockup overlay reveal">
-    <img src="works/critical-facts/ext-phones.jpg" alt="IG 限時動態、貼文與 Reels 延伸示意" loading="lazy">
+  <figure class="overlay reveal">
+    <img src="works/critical-facts/ext-phones.jpg" srcset="works/critical-facts/ext-phones-sm.jpg 1000w, works/critical-facts/ext-phones.jpg 2000w" sizes="(max-width: 1280px) 90vw, 1136px" width="2000" height="1333" decoding="async" alt="IG 限時動態、貼文與 Reels 延伸示意" loading="lazy">
     <figcaption>IG 限時動態／貼文／Reels</figcaption>
   </figure>
 </section>
 
 <!-- 上一件／下一件 -->
-<!-- 目前只有一件作品，先放「回到作品列表」；作品變多後改回上一件／下一件 -->
 <nav class="pager">
-  <a href="./#works"><small>← BACK</small><strong>回到作品列表</strong></a>
-  <a href="./#works"><small>MORE →</small><strong>更多作品陸續更新</strong></a>
+  <a href="speak-truth.html"><small>← PREV</small><strong>啟示錄・說真話</strong></a>
+  <a href="./#works"><small>ALL WORKS →</small><strong>回到作品列表</strong></a>
 </nav>
 <footer>© 2026 REBECCA CHU</footer>
 
-<script>
-  document.querySelectorAll('.switcher button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.body.className = 'layout-' + btn.dataset.l;
-      document.querySelectorAll('.switcher button').forEach(b => b.classList.toggle('on', b === btn));
-    });
-  });
-  // 捲過刊頭後，導覽列換成實心背景，避免壓在文字上
-  const header = document.querySelector('header');
-  const hero = document.querySelector('.hero');
-  const onScroll = () => header.classList.toggle('solid', scrollY > hero.offsetHeight - header.offsetHeight);
-  addEventListener('scroll', onScroll, { passive: true }); onScroll();
-
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-  }, { threshold: 0.15 });
-  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-</script>
+<script src="js/project.js"></script>
 </body>
 </html>
