@@ -37,10 +37,10 @@ header nav { display: flex; gap: 32px; }
 header nav a { opacity: .85; transition: opacity .2s; }
 header nav a:hover { opacity: 1; }
 
-/* ---------- 刊頭 Mockup：比例由各頁的 --hero-ratio 決定 ---------- */
+/* ---------- 刊頭 Mockup：統一 1600×700 的比例，各頁可用 --hero-pos 微調裁切位置 ---------- */
 .hero { width: 100%; overflow: hidden; background: #cfcfcf; }
 .hero img {
-  aspect-ratio: var(--hero-ratio, 2400 / 1017); max-height: 88vh; object-fit: cover;
+  aspect-ratio: 1600 / 700; max-height: 88vh; object-fit: cover; object-position: var(--hero-pos, center);
   animation: heroIn .8s cubic-bezier(.2,.7,.2,1) both;
 }
 @keyframes heroIn { from { opacity: 0; transform: scale(1.04); } to { opacity: 1; transform: none; } }
@@ -115,7 +115,7 @@ footer { padding: 32px var(--gutter); font-size: 12px; color: var(--muted); lett
   header .logo { white-space: nowrap; }
   header nav { gap: 16px; }
   header nav .en { display: none; }
-  .hero img { aspect-ratio: 4 / 3; object-position: 48% center; }
+  .hero img { aspect-ratio: 4 / 3; }
   .intro { padding: 64px var(--gutter) 80px; }
   .intro-grid { grid-template-columns: 1fr; }
   .titles { padding-bottom: 28px; margin-bottom: 28px; }
