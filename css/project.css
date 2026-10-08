@@ -110,6 +110,11 @@ figcaption { font-size: 13px; color: var(--muted); margin-top: 12px; font-family
 .pager strong { font-family: "Noto Sans TC"; font-weight: 500; font-size: 20px; }
 footer { padding: 32px var(--gutter); font-size: 12px; color: var(--muted); letter-spacing: .1em; border-top: 1px solid var(--line); }
 
+/* 模糊預覽淡入（搭配 js/blur-up.js）：外框先顯示模糊小圖，圖片載完再淡入 */
+.blur-up { background-size: cover; background-position: center; background-repeat: no-repeat; }
+.hero.blur-up { background-position: var(--hero-pos, center); }
+.blur-up > img { opacity: 0; transition: opacity .6s ease; }
+.blur-up > img.loaded { opacity: 1; }
 /* ---------- 手機版 ---------- */
 @media (max-width: 760px) {
   header { padding: 16px var(--gutter); font-size: 12px; }

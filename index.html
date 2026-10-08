@@ -25,6 +25,9 @@
   a { color: inherit; text-decoration: none; }
   img { display: block; width: 100%; height: auto; }
   img[style*="background-image"] { background-size: cover; background-position: center; }
+  .blur-up { background-size: cover; background-position: center; }
+  .blur-up > img { opacity: 0; transition: opacity .6s ease; }
+  .blur-up > img.loaded { opacity: 1; }
 
   header {
     position: sticky; top: 0; z-index: 10;
@@ -95,5 +98,6 @@
 </section>
 
 <footer>© 2026 REBECCA CHU</footer>
+<script src="js/blur-up.js"></script>
 </body>
 </html>
