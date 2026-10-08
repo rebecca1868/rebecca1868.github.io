@@ -17,6 +17,8 @@ body {
 }
 a { color: inherit; text-decoration: none; }
 img { display: block; width: 100%; height: auto; }
+/* 模糊預覽：圖片下載完成前，先顯示內嵌的小圖（放大後自然模糊） */
+img[style*="background-image"] { background-size: cover; background-position: center; background-repeat: no-repeat; }
 
 /* ---------- 頂部導覽列：在刊頭上是反白，捲過刊頭後變實心 ---------- */
 header {
@@ -41,9 +43,8 @@ header nav a:hover { opacity: 1; }
 .hero { width: 100%; overflow: hidden; background: #cfcfcf; }
 .hero img {
   aspect-ratio: 1600 / 700; max-height: 88vh; object-fit: cover; object-position: var(--hero-pos, center);
-  animation: heroIn .8s cubic-bezier(.2,.7,.2,1) both;
 }
-@keyframes heroIn { from { opacity: 0; transform: scale(1.04); } to { opacity: 1; transform: none; } }
+.hero img[style*="background-image"] { background-position: var(--hero-pos, center); }
 .scroll-hint {
   text-align: center; font-size: 11px; letter-spacing: .3em; color: var(--muted);
   padding-top: 28px;
