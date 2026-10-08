@@ -3,7 +3,7 @@
 document.querySelectorAll('.hero img, figure img, .thumb img').forEach(img => {
   img.parentElement.classList.add('img-wait');
 
-  const show = () => img.classList.add('loaded');
+  const show = () => { img.classList.add('loaded'); img.parentElement.classList.add('done'); };
   img.addEventListener('load', () => (img.decode ? img.decode().catch(() => {}) : Promise.resolve()).then(show));
   img.addEventListener('error', show);
   if (img.complete && img.naturalWidth) show();

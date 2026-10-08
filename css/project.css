@@ -107,10 +107,22 @@ figcaption { font-size: 13px; color: var(--muted); margin-top: 12px; font-family
 .pager strong { font-family: "Noto Sans TC"; font-weight: 500; font-size: 20px; }
 footer { padding: 32px var(--gutter); font-size: 12px; color: var(--muted); letter-spacing: .1em; border-top: 1px solid var(--line); }
 
-/* 圖片載入（搭配 js/blur-up.js）：外框先顯示素色底，圖片完整載入後再淡入 */
-.img-wait { background-color: #e9e7e3; }
+/* 圖片載入（搭配 js/blur-up.js）：外框先顯示素色底＋中間一條細線的載入動態，圖片完整載入後再淡入 */
+.img-wait { position: relative; background-color: #e9e7e3; }
 .img-wait > img { opacity: 0; transition: opacity .6s ease; }
 .img-wait > img.loaded { opacity: 1; }
+.img-wait::after {
+  content: ""; position: absolute; left: 50%; top: 50%; width: 56px; height: 1px; margin-left: -28px;
+  background: #8a8780; transform-origin: left; animation: imgLoading 1.4s ease-in-out infinite;
+  transition: opacity .3s;
+}
+.img-wait.done::after { opacity: 0; animation: none; }
+@keyframes imgLoading {
+  0%   { transform: scaleX(0); transform-origin: left; }
+  50%  { transform: scaleX(1); transform-origin: left; }
+  50.1%{ transform: scaleX(1); transform-origin: right; }
+  100% { transform: scaleX(0); transform-origin: right; }
+}
 /* ---------- 手機版 ---------- */
 @media (max-width: 760px) {
   header { padding: 16px var(--gutter); font-size: 12px; }
