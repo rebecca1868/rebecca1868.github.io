@@ -34,7 +34,13 @@
     opacity: 0; transition: opacity .5s ease;
   }
   .tile figcaption small { font-size: 11px; font-weight: 400; letter-spacing: .2em; color: #5f5d58; }
-  .tile:hover figcaption { opacity: 1; }
+  .tile figcaption .hint { display: none; margin-top: 10px; font-size: 11px; font-weight: 400; letter-spacing: .2em; color: #5f5d58; }
+  @media (hover: hover) { .tile:hover figcaption { opacity: 1; } }
+  /* 觸控裝置沒有「滑過去」：點第一下出現霧面，再點一下放大 */
+  @media (hover: none) {
+    .tile.show figcaption { opacity: 1; }
+    .tile figcaption .hint { display: block; }
+  }
   /* 全螢幕瀏覽：背後的頁面變成霧面玻璃，插畫清楚浮在上面 */
   .lightbox {
     position: fixed; inset: 0; z-index: 50;
@@ -54,7 +60,6 @@
   @media (max-width: 760px) {
     .wall { column-gap: 0; }
     .tile { margin-bottom: 16px; }
-    .tile figcaption { position: static; opacity: 1; background: none; backdrop-filter: none; -webkit-backdrop-filter: none; align-items: flex-start; padding-top: 12px; font-size: 14px; }   /* 手機沒有滑鼠：名稱放在圖片下方 */
     .lb-nav { display: none; }                           /* 手機用左右滑切換 */
   }
 </style>
@@ -98,11 +103,21 @@
     i = (n + tiles.length) % tiles.length;
     const t = tiles[i], im = t.querySelector('img');
     boxImg.src = im.src;                                   // 放大時用大圖
-    cap.innerHTML = t.querySelector('figcaption').innerHTML;
+    cap.innerHTML = t.querySelector('figcaption').innerHTML.replace(/<span class="hint">.*?<\/span>/, '');
     count.textContent = `${i + 1} / ${tiles.length}`;
     box.classList.add('open');
   };
-  tiles.forEach((t, n) => t.addEventListener('click', () => show(n)));
+  const touch = matchMedia('(hover: none)').matches;
+  tiles.forEach((t, n) => {
+    if (touch) t.querySelector('figcaption').insertAdjacentHTML('beforeend', '<span class="hint">再點一下放大</span>');
+    t.addEventListener('click', () => {
+      if (touch && !t.classList.contains('show')) {          // 觸控：第一下只顯示霧面和名稱
+        tiles.forEach(x => x.classList.toggle('show', x === t));
+        return;
+      }
+      t.classList.remove('show'); show(n);
+    });
+  });
   box.querySelector('.lb-prev').addEventListener('click', e => { e.stopPropagation(); show(i - 1); });
   box.querySelector('.lb-next').addEventListener('click', e => { e.stopPropagation(); show(i + 1); });
   box.addEventListener('click', () => box.classList.remove('open'));
