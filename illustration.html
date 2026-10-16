@@ -24,35 +24,37 @@
   .tile { break-inside: avoid; margin-bottom: 24px; position: relative; overflow: hidden; cursor: zoom-in; }
   .tile img { transition: transform .8s cubic-bezier(.2,.7,.2,1); }
   .tile:hover img { transform: scale(1.04); }
-  /* 滑過去時左下角出現作品名稱 */
+  /* 滑過去時：整張插畫蒙上一層霧面玻璃，作品名稱清楚浮在中間 */
   .tile figcaption {
-    position: absolute; left: 0; right: 0; bottom: 0; margin: 0; padding: 48px 20px 16px;
-    color: #fff; font-size: 14px; letter-spacing: .08em;
-    background: linear-gradient(transparent, rgba(0,0,0,.5));
-    opacity: 0; transform: translateY(8px); transition: opacity .4s, transform .4s;
+    position: absolute; inset: 0; margin: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+    color: var(--ink); font-family: "Noto Sans TC"; font-size: 16px; font-weight: 500; letter-spacing: .12em;
+    background: rgba(245,244,242,.38);
+    -webkit-backdrop-filter: blur(8px) saturate(1.1); backdrop-filter: blur(8px) saturate(1.1);
+    opacity: 0; transition: opacity .5s ease;
   }
-  .tile figcaption small { display: block; font-size: 11px; letter-spacing: .15em; opacity: .8; }
-  .tile:hover figcaption { opacity: 1; transform: none; }
-
-  /* 全螢幕瀏覽：左右切換、下方顯示名稱 */
+  .tile figcaption small { font-size: 11px; font-weight: 400; letter-spacing: .2em; color: #5f5d58; }
+  .tile:hover figcaption { opacity: 1; }
+  /* 全螢幕瀏覽：背後的頁面變成霧面玻璃，插畫清楚浮在上面 */
   .lightbox {
-    position: fixed; inset: 0; z-index: 50; background: rgba(20,20,19,.94);
+    position: fixed; inset: 0; z-index: 50;
+    background: rgba(245,244,242,.55);
+    -webkit-backdrop-filter: blur(28px) saturate(1.1); backdrop-filter: blur(28px) saturate(1.1);
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 56px 24px 24px;
-    cursor: zoom-out; opacity: 0; pointer-events: none; transition: opacity .3s;
+    cursor: zoom-out; opacity: 0; pointer-events: none; transition: opacity .35s;
   }
   .lightbox.open { opacity: 1; pointer-events: auto; }
-  .lightbox img { width: auto; max-width: 100%; max-height: calc(100% - 64px); }
-  .lb-caption { color: #fff; font-family: "Noto Sans TC"; font-size: 14px; letter-spacing: .08em; text-align: center; }
-  .lb-caption small { display: block; font-size: 11px; letter-spacing: .15em; color: rgba(255,255,255,.6); }
-  .lb-nav { position: fixed; top: 50%; transform: translateY(-50%); background: none; border: 0; color: #fff; font-size: 28px; padding: 20px; cursor: pointer; opacity: .7; }
+  .lightbox img { width: auto; max-width: 100%; max-height: calc(100% - 64px); box-shadow: 0 30px 70px -30px rgba(40,35,30,.45); }
+  .lb-caption { color: var(--ink); font-family: "Noto Sans TC"; font-size: 14px; letter-spacing: .1em; text-align: center; }
+  .lb-caption small { display: block; font-size: 11px; letter-spacing: .18em; color: var(--muted); }
+  .lb-nav { position: fixed; top: 50%; transform: translateY(-50%); background: none; border: 0; color: var(--ink); font-size: 28px; padding: 20px; cursor: pointer; opacity: .55; }
   .lb-nav:hover { opacity: 1; }
   .lb-prev { left: 8px; } .lb-next { right: 8px; }
-  .lb-count { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,.6); font-size: 12px; letter-spacing: .2em; }
-
+  .lb-count { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); color: var(--muted); font-size: 12px; letter-spacing: .2em; }
   @media (max-width: 760px) {
     .wall { column-gap: 0; }
     .tile { margin-bottom: 16px; }
-    .tile figcaption { opacity: 1; transform: none; }   /* 手機沒有滑鼠，名稱直接顯示 */
+    .tile figcaption { position: static; opacity: 1; background: none; backdrop-filter: none; -webkit-backdrop-filter: none; align-items: flex-start; padding-top: 12px; font-size: 14px; }   /* 手機沒有滑鼠：名稱放在圖片下方 */
     .lb-nav { display: none; }                           /* 手機用左右滑切換 */
   }
 </style>
@@ -66,7 +68,6 @@
 
 <section class="page-title">
   <h1>Illustration</h1>
-  <p class="sub"><b>插畫</b>手繪線稿・賀卡</p>
   <div class="rule"></div>
 </section>
 
