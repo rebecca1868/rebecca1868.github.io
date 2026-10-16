@@ -25,7 +25,7 @@ header {
   padding: 20px var(--gutter);
   font-size: 13px; letter-spacing: .12em;
   mix-blend-mode: difference; color: #fff;
-  transition: background .3s, color .3s;
+  transition: transform .4s cubic-bezier(.2,.7,.2,1), background .3s, color .3s;
 }
 header.solid {
   mix-blend-mode: normal; color: var(--ink);
@@ -36,6 +36,16 @@ header .logo { font-weight: 600; }
 header nav { display: flex; gap: 32px; }
 header nav a { opacity: .85; transition: opacity .2s; }
 header nav a:hover { opacity: 1; }
+header nav a .en { font-family: "Inter"; font-weight: 300; font-size: 11px; letter-spacing: .14em; margin-left: 6px; opacity: .6; }
+/* 目前所在分類下方的細線；滑過其他分類時細線從左畫出 */
+header nav a { position: relative; padding: 4px 0; font-family: "Noto Sans TC"; letter-spacing: .14em; }
+header nav a::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -2px; height: 1px; background: currentColor;
+  transform: scaleX(0); transform-origin: left; transition: transform .35s ease;
+}
+header nav a:hover::after, header nav a.active::after { transform: scaleX(1); }
+/* 往下滑時收起導覽列（搭配 js/nav.js） */
+header.nav-hidden { transform: translateY(-100%); }
 
 /* ---------- 刊頭 Mockup：統一 1600×700 的比例，各頁可用 --hero-pos 微調裁切位置 ---------- */
 .hero { width: 100%; overflow: hidden; background: #cfcfcf; }
@@ -129,6 +139,7 @@ footer { padding: 32px var(--gutter); font-size: 12px; color: var(--muted); lett
   header .logo { white-space: nowrap; }
   header nav { gap: 16px; }
   header nav .en { display: none; }
+  header nav { gap: 24px; }
   .hero img { aspect-ratio: 4 / 3; }
   .intro { padding: 64px var(--gutter) 80px; }
   .intro-grid { grid-template-columns: 1fr; }

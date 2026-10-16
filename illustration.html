@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>插畫 Illustration｜REBECCA CHU</title>
+<meta name="description" content="REBECCA CHU 插畫作品。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/project.css">
+<style>
+  /* 沒有刊頭的頁面：導覽列一開始就是實心、跟著頁面捲動 */
+  header { position: sticky; }
+  .page-title { padding: clamp(64px, 10vw, 140px) var(--gutter) 56px; max-width: 1440px; margin: 0 auto; }
+  .page-title h1 { font-family: "Inter"; font-weight: 300; font-size: clamp(36px, 6vw, 80px); line-height: 1.05; letter-spacing: .04em; }
+  .page-title h1 span { display: block; font-family: "Noto Sans TC"; font-weight: 500; font-size: 15px; letter-spacing: .2em; color: var(--muted); margin-top: 16px; }
+
+  /* 瀑布流：依每張插畫的原比例錯落排列 */
+  .wall { columns: 2 420px; column-gap: 24px; padding: 0 var(--gutter) 120px; max-width: 1440px; margin: 0 auto; }
+  .tile { break-inside: avoid; margin-bottom: 24px; position: relative; overflow: hidden; cursor: zoom-in; }
+  .tile img { transition: transform .8s cubic-bezier(.2,.7,.2,1); }
+  .tile:hover img { transform: scale(1.04); }
+  /* 滑過去時左下角出現作品名稱 */
+  .tile figcaption {
+    position: absolute; left: 0; right: 0; bottom: 0; margin: 0; padding: 48px 20px 16px;
+    color: #fff; font-size: 14px; letter-spacing: .08em;
+    background: linear-gradient(transparent, rgba(0,0,0,.5));
+    opacity: 0; transform: translateY(8px); transition: opacity .4s, transform .4s;
+  }
+  .tile figcaption small { display: block; font-size: 11px; letter-spacing: .15em; opacity: .8; }
+  .tile:hover figcaption { opacity: 1; transform: none; }
+
+  /* 全螢幕瀏覽：左右切換、下方顯示名稱 */
+  .lightbox {
+    position: fixed; inset: 0; z-index: 50; background: rgba(20,20,19,.94);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 56px 24px 24px;
+    cursor: zoom-out; opacity: 0; pointer-events: none; transition: opacity .3s;
+  }
+  .lightbox.open { opacity: 1; pointer-events: auto; }
+  .lightbox img { width: auto; max-width: 100%; max-height: calc(100% - 64px); }
+  .lb-caption { color: #fff; font-family: "Noto Sans TC"; font-size: 14px; letter-spacing: .08em; text-align: center; }
+  .lb-caption small { display: block; font-size: 11px; letter-spacing: .15em; color: rgba(255,255,255,.6); }
+  .lb-nav { position: fixed; top: 50%; transform: translateY(-50%); background: none; border: 0; color: #fff; font-size: 28px; padding: 20px; cursor: pointer; opacity: .7; }
+  .lb-nav:hover { opacity: 1; }
+  .lb-prev { left: 8px; } .lb-next { right: 8px; }
+  .lb-count { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,.6); font-size: 12px; letter-spacing: .2em; }
+
+  @media (max-width: 760px) {
+    .wall { column-gap: 0; }
+    .tile { margin-bottom: 16px; }
+    .tile figcaption { opacity: 1; transform: none; }   /* 手機沒有滑鼠，名稱直接顯示 */
+    .lb-nav { display: none; }                           /* 手機用左右滑切換 */
+  }
+</style>
+</head>
+<body>
+
+<header class="solid">
+  <a class="logo" href="./">REBECCA CHU</a>
+  <nav><a href="./">平面設計<span class="en">Graphic</span></a><a href="illustration.html" class="active">插畫<span class="en">Illustration</span></a></nav>
+</header>
+
+<section class="page-title">
+  <h1>Illustration<span>插畫作品</span></h1>
+</section>
+
+<section class="wall">
+  <!-- tiles:start -->
+  <figure class="tile"><img src="works/illustration/il-68f68974.jpg" srcset="works/illustration/il-68f68974-sm.jpg 800w, works/illustration/il-68f68974.jpg 1600w" sizes="(max-width: 760px) 92vw, 45vw" width="1600" height="1136" alt="樹洞一號" loading="lazy" decoding="async"><figcaption>樹洞一號<small>2026　賀卡</small></figcaption></figure>
+  <figure class="tile"><img src="works/illustration/il-edb847fd.jpg" srcset="works/illustration/il-edb847fd-sm.jpg 800w, works/illustration/il-edb847fd.jpg 1600w" sizes="(max-width: 760px) 92vw, 45vw" width="1600" height="1136" alt="樹洞二號" loading="lazy" decoding="async"><figcaption>樹洞二號<small>2026　賀卡</small></figcaption></figure>
+  <!-- tiles:end -->
+</section>
+
+<footer>© 2026 REBECCA CHU</footer>
+
+<div class="lightbox">
+  <span class="lb-count"></span>
+  <img alt="">
+  <div class="lb-caption"></div>
+  <button class="lb-nav lb-prev" aria-label="上一張">←</button>
+  <button class="lb-nav lb-next" aria-label="下一張">→</button>
+</div>
+
+<script>
+  // 全螢幕瀏覽：點圖開啟、左右切換（按鈕、鍵盤方向鍵、手機左右滑）、點背景或 Esc 關閉
+  const tiles = [...document.querySelectorAll('.tile')];
+  const box = document.querySelector('.lightbox'), boxImg = box.querySelector('img');
+  const cap = box.querySelector('.lb-caption'), count = box.querySelector('.lb-count');
+  let i = 0;
+  const show = n => {
+    i = (n + tiles.length) % tiles.length;
+    const t = tiles[i], im = t.querySelector('img');
+    boxImg.src = im.src;                                   // 放大時用大圖
+    cap.innerHTML = t.querySelector('figcaption').innerHTML;
+    count.textContent = `${i + 1} / ${tiles.length}`;
+    box.classList.add('open');
+  };
+  tiles.forEach((t, n) => t.addEventListener('click', () => show(n)));
+  box.querySelector('.lb-prev').addEventListener('click', e => { e.stopPropagation(); show(i - 1); });
+  box.querySelector('.lb-next').addEventListener('click', e => { e.stopPropagation(); show(i + 1); });
+  box.addEventListener('click', () => box.classList.remove('open'));
+  addEventListener('keydown', e => {
+    if (!box.classList.contains('open')) return;
+    if (e.key === 'Escape') box.classList.remove('open');
+    if (e.key === 'ArrowLeft') show(i - 1);
+    if (e.key === 'ArrowRight') show(i + 1);
+  });
+  let x0 = null;
+  box.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
+  box.addEventListener('touchend', e => {
+    if (x0 === null) return;
+    const dx = e.changedTouches[0].clientX - x0; x0 = null;
+    if (Math.abs(dx) > 50) { e.preventDefault(); show(dx < 0 ? i + 1 : i - 1); }
+  });
+</script>
+<script src="js/blur-up.js"></script>
+<script src="js/nav.js"></script>
+</body>
+</html>

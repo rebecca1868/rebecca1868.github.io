@@ -3,3 +3,5 @@ tools/
 images/
 # 目前頁面沒有用到的大檔
 works/critical-facts/ig-motion.mp4
+# 示範版型，只在本機預覽
+demo/
