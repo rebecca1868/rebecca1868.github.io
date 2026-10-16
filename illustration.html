@@ -12,12 +12,15 @@
 <style>
   /* 沒有刊頭的頁面：導覽列一開始就是實心、跟著頁面捲動 */
   header { position: sticky; }
-  .page-title { padding: clamp(64px, 10vw, 140px) var(--gutter) 56px; max-width: 1440px; margin: 0 auto; }
-  .page-title h1 { font-family: "Inter"; font-weight: 300; font-size: clamp(36px, 6vw, 80px); line-height: 1.05; letter-spacing: .04em; }
-  .page-title h1 span { display: block; font-family: "Noto Sans TC"; font-weight: 500; font-size: 15px; letter-spacing: .2em; color: var(--muted); margin-top: 16px; }
+  /* 分類頁開頭（平面設計、插畫共用）：大字英文分類名 → 中文名＋說明 → 深色長線＋作品數量 */
+  .page-title { padding: clamp(64px, 10vw, 140px) var(--gutter) 0; max-width: 1440px; margin: 0 auto; }
+  .page-title h1 { font-family: "Inter", sans-serif; font-weight: 300; font-size: clamp(40px, 7vw, 96px); line-height: 1.02; letter-spacing: .02em; }
+  .page-title .sub { margin-top: 20px; font-family: "Noto Sans TC"; font-size: 15px; color: var(--muted); letter-spacing: .1em; }
+  .page-title .sub b { color: var(--ink); font-weight: 500; margin-right: 14px; }
+  .page-title .rule { margin-top: clamp(40px, 6vw, 72px); padding-bottom: 14px; border-bottom: 1px solid var(--ink); text-align: right; font-size: 12px; letter-spacing: .2em; color: var(--muted); }
 
   /* 瀑布流：依每張插畫的原比例錯落排列 */
-  .wall { columns: 2 420px; column-gap: 24px; padding: 0 var(--gutter) 120px; max-width: 1440px; margin: 0 auto; }
+  .wall { columns: 2 420px; column-gap: 24px; padding: 40px var(--gutter) 120px; max-width: 1440px; margin: 0 auto; }
   .tile { break-inside: avoid; margin-bottom: 24px; position: relative; overflow: hidden; cursor: zoom-in; }
   .tile img { transition: transform .8s cubic-bezier(.2,.7,.2,1); }
   .tile:hover img { transform: scale(1.04); }
@@ -62,7 +65,9 @@
 </header>
 
 <section class="page-title">
-  <h1>Illustration<span>插畫作品</span></h1>
+  <h1>Illustration</h1>
+  <p class="sub"><b>插畫</b>手繪線稿・賀卡</p>
+  <div class="rule"><!-- count -->2 WORKS<!-- /count --></div>
 </section>
 
 <section class="wall">

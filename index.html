@@ -46,19 +46,14 @@
   header { transition: transform .4s cubic-bezier(.2,.7,.2,1); }
   header.nav-hidden { transform: translateY(-100%); }
 
-  /* 開場標題 */
-  .intro { padding: clamp(80px, 14vw, 180px) var(--gutter) clamp(64px, 9vw, 120px); max-width: 1440px; margin: 0 auto; }
-  .intro h1 {
-    font-family: "Inter", sans-serif; font-weight: 300;
-    font-size: clamp(40px, 8vw, 112px); line-height: 1.02; letter-spacing: .02em;
-  }
-  .intro p { margin-top: 28px; font-family: "Noto Sans TC"; font-size: 15px; color: var(--muted); letter-spacing: .08em; }
-
+  /* 分類頁開頭（平面設計、插畫共用）：大字英文分類名 → 中文名＋說明 → 深色長線＋作品數量 */
+  .page-title { padding: clamp(64px, 10vw, 140px) var(--gutter) 0; max-width: 1440px; margin: 0 auto; }
+  .page-title h1 { font-family: "Inter", sans-serif; font-weight: 300; font-size: clamp(40px, 7vw, 96px); line-height: 1.02; letter-spacing: .02em; }
+  .page-title .sub { margin-top: 20px; font-family: "Noto Sans TC"; font-size: 15px; color: var(--muted); letter-spacing: .1em; }
+  .page-title .sub b { color: var(--ink); font-weight: 500; margin-right: 14px; }
+  .page-title .rule { margin-top: clamp(40px, 6vw, 72px); padding-bottom: 14px; border-bottom: 1px solid var(--ink); text-align: right; font-size: 12px; letter-spacing: .2em; color: var(--muted); }
   /* 作品列表 */
-  .works { padding: 0 var(--gutter) 120px; max-width: 1440px; margin: 0 auto; }
-  .works-title { display: flex; align-items: baseline; gap: 16px; font-size: 13px; letter-spacing: .2em; padding-bottom: 20px; border-bottom: 1px solid var(--ink); margin-bottom: 40px; }
-  .works-title b { font-family: "Noto Sans TC"; font-weight: 500; font-size: 15px; letter-spacing: .1em; }
-  .works-title span { color: var(--muted); }
+  .works { padding: 40px var(--gutter) 120px; max-width: 1440px; margin: 0 auto; }
   .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 56px 40px; }
   .card .thumb { overflow: hidden; background: #ddd; }
   .card .thumb img { aspect-ratio: 4 / 3; object-fit: cover; transition: transform 1.2s cubic-bezier(.2,.7,.2,1); }
@@ -85,13 +80,13 @@
   <nav><a href="./" class="active">平面設計<span class="en">Graphic</span></a><a href="illustration.html">插畫<span class="en">Illustration</span></a></nav>
 </header>
 
-<section class="intro">
-  <h1>REBECCA CHU</h1>
-  <p>平面設計作品集　海報・DM・書籍封面・社群視覺</p>
+<section class="page-title">
+  <h1>Graphic Design</h1>
+  <p class="sub"><b>平面設計</b>海報・DM・書籍封面・社群視覺</p>
+  <div class="rule">2 WORKS</div>
 </section>
 
 <section class="works" id="works">
-  <div class="works-title"><b>作品</b><span>WORKS</span></div>
   <div class="grid">
     <a class="card" href="speak-truth.html">
       <div class="thumb"><img src="works/speak-truth/hero-sm.jpg" srcset="works/speak-truth/hero-sm.jpg 1000w, works/speak-truth/hero.jpg 2000w" sizes="(max-width: 760px) 92vw, 45vw" width="2000" height="1333" alt="啟示錄・說真話"></div>
