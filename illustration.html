@@ -13,10 +13,9 @@
 <style>
   /* 沒有刊頭的頁面：導覽列一開始就是實心、跟著頁面捲動 */
   header { position: sticky; }
-  /* 分類頁開頭（平面設計、插畫共用）：英文分類名 → 深色長線 */
+  /* 分類頁開頭（平面設計、插畫共用）：英文分類名 */
   .page-title { padding: clamp(48px, 7vw, 96px) var(--gutter) 0; max-width: 1440px; margin: 0 auto; }
   .page-title h1 { font-family: "Inter", sans-serif; font-weight: 300; font-size: clamp(28px, 3.2vw, 44px); line-height: 1.15; letter-spacing: .04em; }
-  .page-title .rule { margin-top: clamp(32px, 4vw, 48px); padding-bottom: 14px; border-bottom: 1px solid var(--ink); }
 
   /* 瀑布流：依每張插畫的原比例錯落排列，圓角、較小的間距 */
   .wall { columns: 2 380px; column-gap: 12px; padding: 40px var(--gutter) 120px; max-width: 1440px; margin: 0 auto; }
@@ -50,7 +49,6 @@
 
 <section class="page-title">
   <h1>Illustration</h1>
-  <div class="rule"></div>
 </section>
 
 <section class="wall">
