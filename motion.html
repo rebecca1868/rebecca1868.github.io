@@ -18,7 +18,7 @@
   .wrap { max-width: 1280px; margin: 0 auto; padding: 32px var(--gutter) 120px; }
 
   /* ---------- 播放區：左右滑動切換影片 ---------- */
-  .stage { position: relative; border-radius: var(--r); overflow: hidden; background: #1d1d1b; }
+  .stage { position: relative; border-radius: var(--r); overflow: hidden; background: rgba(255,255,255,.25); }
   .track {
     display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
     height: min(72vh, 640px);
@@ -26,8 +26,14 @@
   .track::-webkit-scrollbar { display: none; }
   .slide { position: relative; flex: 0 0 100%; scroll-snap-align: center; scroll-snap-stop: always; display: flex; align-items: center; justify-content: center; overflow: hidden; }
   /* 影片後方：封面的霧面模糊版，直式橫式都不會有黑邊 */
-  .slide .backdrop { position: absolute; inset: -40px; background-size: cover; background-position: center; filter: blur(36px) saturate(1.1) brightness(.75); transform: scale(1.1); }
-  .frame { position: relative; overflow: hidden; border-radius: calc(var(--r) - 4px); cursor: pointer; background: #000; box-shadow: 0 24px 60px -24px rgba(0,0,0,.6); }
+  .slide .backdrop { position: absolute; inset: -60px; background-size: cover; background-position: center; filter: blur(60px) saturate(1.15); opacity: .35; transform: scale(1.1); }
+  /* 霧面玻璃層：讓底色更淡、接近透明 */
+  .slide::after { content: ""; position: absolute; inset: 0; background: rgba(245,244,242,.35); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); z-index: 0; }
+  .slide > * { z-index: 1; }
+  .slide .backdrop { z-index: 0; }
+  /* 點播放區左右兩側（影片以外的地方）切換影片 */
+  .slide.can-prev, .slide.can-next { cursor: pointer; }
+  .frame { position: relative; overflow: hidden; border-radius: calc(var(--r) - 4px); cursor: pointer; background: #000; box-shadow: 0 24px 60px -28px rgba(40,35,30,.45); }
   .frame img { width: 100%; height: 100%; object-fit: cover; }
   .frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
   .play {
@@ -40,22 +46,11 @@
   @media (hover: hover) { .frame:hover .play { transform: scale(1.08); background: rgba(245,244,242,.8); } }
   .frame.playing { cursor: default; }
   .frame.playing .play, .frame.playing img { display: none; }
-  /* 左右箭頭 */
-  .arrow {
-    position: absolute; top: 50%; z-index: 2; width: 44px; height: 44px; margin-top: -22px; border-radius: 50%;
-    border: 1px solid rgba(255,255,255,.35); color: #fff; font: 18px "Inter"; cursor: pointer;
-    background: rgba(255,255,255,.12); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
-    transition: background .2s, opacity .2s;
-  }
-  .arrow:hover { background: rgba(255,255,255,.28); }
-  .arrow[disabled] { opacity: 0; pointer-events: none; }
-  .arrow.prev { left: 16px; } .arrow.next { right: 16px; }
 
   /* ---------- 影片資訊：跟著播放區切換 ---------- */
   .now { padding: 20px 2px 0; }
   .now-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
   .now h2 { font-family: "Noto Sans TC"; font-weight: 500; font-size: clamp(18px, 2vw, 22px); letter-spacing: .05em; }
-  .now .count { font-size: 12px; letter-spacing: .2em; color: var(--muted); white-space: nowrap; }
   .now .sub { margin-top: 4px; font-size: 13px; letter-spacing: .1em; color: var(--muted); font-family: "Noto Sans TC"; }
   .now-body { transition: opacity .25s ease; }
   .now-body.fade { opacity: 0; }
@@ -95,7 +90,6 @@
 
   @media (max-width: 760px) {
     .track { height: 68vh; }
-    .arrow { display: none; }                       /* 手機直接左右滑 */
     .info-body { grid-template-columns: 1fr; gap: 16px; }
     .grid { grid-template-columns: 1fr 1fr; gap: 20px 10px; }
     .play { width: 54px; height: 54px; margin: -27px 0 0 -27px; font-size: 16px; }
@@ -116,8 +110,6 @@
 <main class="wrap">
   <div class="stage">
     <div class="track" aria-live="polite"></div>
-    <button class="arrow prev" aria-label="上一支影片">←</button>
-    <button class="arrow next" aria-label="下一支影片">→</button>
   </div>
 
   <section class="now">
@@ -152,7 +144,6 @@
   const val = s => s === '待補' ? '<span class="todo">待補</span>' : esc(s);
 
   const track = document.querySelector('.track'), body = document.querySelector('.now-body'), grid = document.querySelector('.grid');
-  const prevBtn = document.querySelector('.arrow.prev'), nextBtn = document.querySelector('.arrow.next');
 
   // 建立播放區的每一張投影片
   VIDEOS.forEach((v, n) => {
@@ -201,7 +192,7 @@
     const v = VIDEOS[n];
     const render = () => {
       body.innerHTML = `
-        <div class="now-head"><h2>${esc(v.title)}</h2><span class="count">${n + 1} / ${VIDEOS.length}</span></div>
+        <div class="now-head"><h2>${esc(v.title)}</h2></div>
         <p class="sub">${esc(v.sub)}・${v.duration}</p>
         <details class="info"${document.querySelector('.info[open]') ? ' open' : ''}>
           <summary><span>INFO</span><i></i></summary>
@@ -214,7 +205,7 @@
     };
     if (first) render(); else { body.classList.add('fade'); setTimeout(render, 200); }
     cards.forEach((c, i) => c.classList.toggle('on', i === n));
-    prevBtn.disabled = n === 0; nextBtn.disabled = n === VIDEOS.length - 1;
+    slides.forEach((s, i) => { s.classList.toggle('can-prev', i === n && n > 0); s.classList.toggle('can-next', i === n && n < VIDEOS.length - 1); });
     history.replaceState(null, '', '#' + v.id);
   }
   function go(n) {
@@ -222,8 +213,12 @@
     track.scrollTo({ left: slides[n].offsetLeft, behavior: 'smooth' });
     show(n);
   }
-  prevBtn.addEventListener('click', () => go(index - 1));
-  nextBtn.addEventListener('click', () => go(index + 1));
+  // 點影片以外的左半邊 → 上一支，右半邊 → 下一支
+  slides.forEach(s => s.addEventListener('click', e => {
+    if (e.target.closest('.frame')) return;
+    const r = s.getBoundingClientRect();
+    go(e.clientX < r.left + r.width / 2 ? index - 1 : index + 1);
+  }));
   addEventListener('keydown', e => {
     if (e.target.closest('input, textarea')) return;
     if (e.key === 'ArrowLeft') go(index - 1);
