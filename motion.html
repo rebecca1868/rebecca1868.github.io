@@ -26,6 +26,11 @@
   }
   .track::-webkit-scrollbar { display: none; }
   .slide { position: relative; flex: 0 0 100%; scroll-snap-align: center; scroll-snap-stop: always; display: flex; align-items: flex-start; justify-content: center; }
+  /* 播放區左右兩側，一直延伸到螢幕邊緣：點擊切換上一支／下一支（有滑鼠的裝置） */
+  body { overflow-x: clip; }
+  .zone { position: absolute; top: 0; bottom: 0; width: calc((100vw - 100%) / 2); cursor: pointer; display: none; }
+  .zone.prev { right: 100%; } .zone.next { left: 100%; }
+  @media (hover: hover) { .zone.on { display: block; } }
   /* 點影片以外的左右空白處切換影片 */
   .slide.can-prev, .slide.can-next { cursor: pointer; }
   .frame { position: relative; overflow: hidden; border-radius: var(--r); cursor: pointer; background: #1d1d1b; }
@@ -104,6 +109,8 @@
 <main class="wrap">
   <div class="stage">
     <div class="track" aria-live="polite"></div>
+    <div class="zone prev" aria-hidden="true"></div>
+    <div class="zone next" aria-hidden="true"></div>
   </div>
 
   <section class="now">
@@ -137,6 +144,7 @@
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const val = s => s === '待補' ? '<span class="todo">待補</span>' : esc(s);
 
+  const zonePrev = document.querySelector('.zone.prev'), zoneNext = document.querySelector('.zone.next');
   const track = document.querySelector('.track'), body = document.querySelector('.now-body'), grid = document.querySelector('.grid');
 
   // 建立播放區的每一張投影片
@@ -168,9 +176,7 @@
 
   // 影片依比例縮放到播放區裡（直式、橫式都完整顯示）
   const maxH = () => Math.min(innerHeight * (innerWidth <= 760 ? .7 : .78), 720);
-  const mouse = matchMedia('(hover: hover)').matches;
-  // 有滑鼠的裝置：影片左右各留一段空白，點空白處可以切換；手機用滑的，維持滿寬
-  const sizeOf = n => { const r = VIDEOS[n].ratio, W = track.clientWidth - (mouse ? 2 * Math.max(56, track.clientWidth * .06) : 0), w = Math.min(W, maxH() * r); return [w, w / r]; };
+  const sizeOf = n => { const r = VIDEOS[n].ratio, W = track.clientWidth, w = Math.min(W, maxH() * r); return [w, w / r]; };
   const fit = () => {
     slides.forEach((s, n) => { const [w, h] = sizeOf(n); frames[n].style.width = w + 'px'; frames[n].style.height = h + 'px'; });
     if (index >= 0) track.style.height = sizeOf(index)[1] + 'px';
@@ -203,6 +209,7 @@
     if (first) render(); else { body.classList.add('fade'); setTimeout(render, 200); }
     cards.forEach((c, i) => c.classList.toggle('on', i === n));
     slides.forEach((s, i) => { s.classList.toggle('can-prev', i === n && n > 0); s.classList.toggle('can-next', i === n && n < VIDEOS.length - 1); });
+    zonePrev.classList.toggle('on', n > 0); zoneNext.classList.toggle('on', n < VIDEOS.length - 1);
     history.replaceState(null, '', '#' + v.id);
   }
   function go(n) {
@@ -210,6 +217,8 @@
     track.scrollTo({ left: slides[n].offsetLeft, behavior: 'smooth' });
     if (n !== index) show(n);
   }
+  zonePrev.addEventListener('click', () => go(index - 1));
+  zoneNext.addEventListener('click', () => go(index + 1));
   // 點影片以外的左半邊 → 上一支，右半邊 → 下一支
   slides.forEach(s => s.addEventListener('click', e => {
     if (e.target.closest('.frame')) return;
