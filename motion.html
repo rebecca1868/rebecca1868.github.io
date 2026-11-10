@@ -21,8 +21,29 @@
   .work-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 20px; }
   .work-head h2 { font-family: "Noto Sans TC"; font-weight: 500; font-size: 18px; letter-spacing: .06em; }
   .work-head p { font-size: 12px; letter-spacing: .16em; color: var(--muted); white-space: nowrap; }
-  .credits { margin-top: 14px; font-size: 12px; color: var(--muted); letter-spacing: .06em; font-family: "Noto Sans TC"; }
-
+  /* 影片下方的作品資訊：可展開／收合 */
+  .info { margin-top: 16px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .info summary {
+    list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 2px; font-size: 12px; letter-spacing: .2em; color: var(--muted); user-select: none;
+  }
+  .info summary::-webkit-details-marker { display: none; }
+  .info summary:hover { color: var(--ink); }
+  .info summary i { position: relative; width: 11px; height: 11px; }
+  .info summary i::before, .info summary i::after { content: ""; position: absolute; left: 0; top: 5px; width: 11px; height: 1px; background: currentColor; transition: transform .3s ease; }
+  .info summary i::after { transform: rotate(90deg); }
+  .info[open] summary i::after { transform: rotate(0deg); }
+  .info .info-body { display: grid; grid-template-columns: minmax(220px, 1fr) 2fr; gap: 8px 64px; padding: 6px 2px 24px; }
+  .info .meta { margin: 0; }
+  .info .desc p { font-size: 15px; }
+  .info .todo { color: #b4762f; }
+  /* 支援的瀏覽器有展開動畫 */
+  @supports (interpolate-size: allow-keywords) {
+    .info { interpolate-size: allow-keywords; }
+    .info::details-content { block-size: 0; overflow: hidden; transition: block-size .4s ease, content-visibility .4s allow-discrete; }
+    .info[open]::details-content { block-size: auto; }
+  }
+  @media (max-width: 760px) { .info .info-body { grid-template-columns: 1fr; gap: 16px; } }
   /* 直式影片：放在素色帶上，並排置中 */
   .vertical { background: #e9e7e3; border-radius: var(--r); padding: clamp(28px, 5vw, 64px) 16px; display: flex; justify-content: center; gap: clamp(16px, 4vw, 56px); }
   .vertical .clip { width: min(300px, 42%); }
@@ -86,16 +107,41 @@
         <figcaption>EP02　1:00</figcaption>
       </figure>
     </div>
+    <details class="info">
+      <summary><span>INFO　作品資訊</span><i></i></summary>
+      <div class="info-body">
+        <ul class="meta">
+          <li><span>類別</span><span>動態設計／直式短片</span></li>
+          <li><span>年份</span><span class="todo">待補</span></li>
+          <li><span>片長</span><span>EP01 0:45　EP02 1:00</span></li>
+          <li><span>負責</span><span class="todo">待補</span></li>
+          <li><span>工具</span><span class="todo">待補</span></li>
+        </ul>
+        <div class="desc"><p class="todo">這裡放作品介紹：為什麼活動製作、想傳達的內容、畫面風格的想法。</p></div>
+      </div>
+    </details>
   </section>
-
   <section class="work wide">
+
     <div class="work-head"><h2>Hey Brother</h2><p>2020　2D ANIMATION　1:13</p></div>
     <div class="player" data-vimeo="427283787" aria-label="播放 Hey Brother">
       <img src="works/motion/v-427283787.jpg" srcset="works/motion/v-427283787-sm.jpg 640w, works/motion/v-427283787.jpg 1280w" sizes="(max-width: 1280px) 90vw, 1136px" width="1280" height="720" alt="Hey Brother 封面" loading="lazy">
       <span class="play">▶</span>
     </div>
-    <p class="credits">Choreography：Dylan Mayoral　Music：Avicii “Hey Brother”　Drawing：壹人可行</p>
-  </section>
+    <details class="info">
+      <summary><span>INFO　作品資訊</span><i></i></summary>
+      <div class="info-body">
+        <ul class="meta">
+          <li><span>類別</span><span>2D 動畫</span></li>
+          <li><span>年份</span><span>2020</span></li>
+          <li><span>片長</span><span>1:13</span></li>
+          <li><span>編舞</span><span>Dylan Mayoral</span></li>
+          <li><span>音樂</span><span>Avicii “Hey Brother”</span></li>
+          <li><span>繪製</span><span>壹人可行</span></li>
+        </ul>
+        <div class="desc"><p class="todo">這裡放作品介紹（可留空）。</p></div>
+      </div>
+    </details>  </section>
 
 </div>
 
