@@ -18,22 +18,16 @@
   .wrap { max-width: 1280px; margin: 0 auto; padding: 32px var(--gutter) 120px; }
 
   /* ---------- 播放區：左右滑動切換影片 ---------- */
-  .stage { position: relative; border-radius: var(--r); overflow: hidden; background: rgba(255,255,255,.25); }
+  .stage { position: relative; }
   .track {
     display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
-    height: min(72vh, 640px);
+    transition: height .45s cubic-bezier(.2,.7,.2,1);
   }
   .track::-webkit-scrollbar { display: none; }
-  .slide { position: relative; flex: 0 0 100%; scroll-snap-align: center; scroll-snap-stop: always; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-  /* 影片後方：封面的霧面模糊版，直式橫式都不會有黑邊 */
-  .slide .backdrop { position: absolute; inset: -60px; background-size: cover; background-position: center; filter: blur(60px) saturate(1.15); opacity: .35; transform: scale(1.1); }
-  /* 霧面玻璃層：讓底色更淡、接近透明 */
-  .slide::after { content: ""; position: absolute; inset: 0; background: rgba(245,244,242,.35); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); z-index: 0; }
-  .slide > * { z-index: 1; }
-  .slide .backdrop { z-index: 0; }
-  /* 點播放區左右兩側（影片以外的地方）切換影片 */
+  .slide { position: relative; flex: 0 0 100%; scroll-snap-align: center; scroll-snap-stop: always; display: flex; align-items: flex-start; justify-content: center; }
+  /* 點影片以外的左右空白處切換影片 */
   .slide.can-prev, .slide.can-next { cursor: pointer; }
-  .frame { position: relative; overflow: hidden; border-radius: calc(var(--r) - 4px); cursor: pointer; background: #000; box-shadow: 0 24px 60px -28px rgba(40,35,30,.45); }
+  .frame { position: relative; overflow: hidden; border-radius: var(--r); cursor: pointer; background: #1d1d1b; }
   .frame img { width: 100%; height: 100%; object-fit: cover; }
   .frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
   .play {
@@ -89,7 +83,6 @@
   .card small { display: block; margin-top: 2px; font-size: 12px; letter-spacing: .1em; color: var(--muted); font-family: "Noto Sans TC"; }
 
   @media (max-width: 760px) {
-    .track { height: 68vh; }
     .info-body { grid-template-columns: 1fr; gap: 16px; }
     .grid { grid-template-columns: 1fr 1fr; gap: 20px 10px; }
     .play { width: 54px; height: 54px; margin: -27px 0 0 -27px; font-size: 16px; }
@@ -148,8 +141,7 @@
   // 建立播放區的每一張投影片
   VIDEOS.forEach((v, n) => {
     const s = document.createElement('div'); s.className = 'slide';
-    s.innerHTML = `<div class="backdrop" style="background-image:url('${cover(v, 'sm')}')"></div>
-      <div class="frame" role="button" tabindex="0" aria-label="播放 ${esc(v.title)}">
+    s.innerHTML = `<div class="frame" role="button" tabindex="0" aria-label="播放 ${esc(v.title)}">
         <img src="${cover(v)}" alt="${esc(v.title)} 封面" ${n ? 'loading="lazy"' : ''}><span class="play">▶</span></div>`;
     track.appendChild(s);
     const frame = s.querySelector('.frame');
@@ -175,12 +167,13 @@
   const slides = [...track.children], frames = slides.map(s => s.querySelector('.frame')), cards = [...grid.children];
 
   // 影片依比例縮放到播放區裡（直式、橫式都完整顯示）
-  const fit = () => slides.forEach((s, n) => {
-    const r = VIDEOS[n].ratio, W = s.clientWidth * .92, H = s.clientHeight * .9;
-    const w = Math.min(W, H * r);
-    frames[n].style.width = w + 'px'; frames[n].style.height = (w / r) + 'px';
-  });
-  fit(); addEventListener('resize', fit);
+  const maxH = () => Math.min(innerHeight * (innerWidth <= 760 ? .7 : .78), 720);
+  const sizeOf = n => { const r = VIDEOS[n].ratio, W = track.clientWidth, w = Math.min(W, maxH() * r); return [w, w / r]; };
+  const fit = () => {
+    slides.forEach((s, n) => { const [w, h] = sizeOf(n); frames[n].style.width = w + 'px'; frames[n].style.height = h + 'px'; });
+    if (index >= 0) track.style.height = sizeOf(index)[1] + 'px';
+  };
+  addEventListener('resize', fit);
 
   function stopAll() { frames.forEach(f => { const i = f.querySelector('iframe'); if (i) i.remove(); f.classList.remove('playing'); }); }
 
@@ -189,6 +182,7 @@
   function show(n) {
     if (n === index) return;
     const first = index === -1; index = n; stopAll();
+    track.style.height = sizeOf(n)[1] + 'px';
     const v = VIDEOS[n];
     const render = () => {
       body.innerHTML = `
@@ -234,7 +228,7 @@
 
   // 網址帶有 #影片編號 時，直接打開那一支（方便分享特定影片）
   const start = Math.max(0, VIDEOS.findIndex(v => '#' + v.id === location.hash));
-  show(start);
+  fit(); show(start);
   requestAnimationFrame(() => { track.scrollLeft = slides[start].offsetLeft; });
 </script>
 <script src="js/nav.js"></script>
