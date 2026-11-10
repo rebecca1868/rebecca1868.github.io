@@ -36,7 +36,15 @@
   const slides = [...track.children], slideImgs = slides.map(s => s.firstChild), thumbBtns = [...thumbs.children];
 
   let index = 0, isOpen = false;
-  const load = n => { const im = slideImgs[n]; if (im && !im.src) im.src = im.dataset.src; };
+  // 每張圖都縮放到填滿可用空間（保持比例），解析度不同的圖顯示起來一樣大
+  const fit = im => {
+    if (!im.naturalWidth || !im.parentElement.clientWidth) return;
+    const s = im.parentElement, r = Math.min(s.clientWidth / im.naturalWidth, s.clientHeight / im.naturalHeight);
+    im.style.width = Math.floor(im.naturalWidth * r) + 'px'; im.style.height = Math.floor(im.naturalHeight * r) + 'px';
+  };
+  slideImgs.forEach(im => im.addEventListener('load', () => fit(im)));
+  addEventListener('resize', () => slideImgs.forEach(fit));
+  const load = n => { const im = slideImgs[n]; if (im && !im.src) im.src = im.dataset.src; else if (im) fit(im); };
   const captionOf = n => {
     const fig = sources[n].closest('figure'), fc = fig && fig.querySelector('figcaption');
     if (!fc) return sources[n].alt;
