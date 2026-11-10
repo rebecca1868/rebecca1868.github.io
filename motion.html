@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>影像 Motion｜REBECCA CHU</title>
+<meta name="description" content="REBECCA CHU 影像與動態作品。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://player.vimeo.com">
+<link rel="stylesheet" href="css/project.css">
+<style>
+  /* 沒有刊頭的頁面：導覽列一開始就是實心、跟著頁面捲動 */
+  header { position: sticky; }
+  .page-title { padding: clamp(48px, 7vw, 96px) var(--gutter) 0; max-width: 1440px; margin: 0 auto; }
+  .page-title h1 { font-family: "Inter", sans-serif; font-weight: 300; font-size: clamp(28px, 3.2vw, 44px); line-height: 1.15; letter-spacing: .04em; }
+
+  .reel { max-width: 1280px; margin: 0 auto; padding: 40px var(--gutter) 0; }
+  .work { padding-bottom: clamp(72px, 9vw, 120px); }
+  .work-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 20px; }
+  .work-head h2 { font-family: "Noto Sans TC"; font-weight: 500; font-size: 18px; letter-spacing: .06em; }
+  .work-head p { font-size: 12px; letter-spacing: .16em; color: var(--muted); white-space: nowrap; }
+  .credits { margin-top: 14px; font-size: 12px; color: var(--muted); letter-spacing: .06em; font-family: "Noto Sans TC"; }
+
+  /* 直式影片：放在素色帶上，並排置中 */
+  .vertical { background: #e9e7e3; border-radius: var(--r); padding: clamp(28px, 5vw, 64px) 16px; display: flex; justify-content: center; gap: clamp(16px, 4vw, 56px); }
+  .vertical .clip { width: min(300px, 42%); }
+  .vertical .player { aspect-ratio: 9 / 16; }
+  .wide .player { aspect-ratio: 16 / 9; }
+  .clip figcaption { margin-top: 12px; text-align: center; font-size: 12px; letter-spacing: .18em; color: var(--muted); }
+
+  /* 播放器：先只顯示封面，點了才載入 Vimeo（頁面打開比較快） */
+  .player { position: relative; overflow: hidden; border-radius: var(--r); background: #1d1d1b; cursor: pointer; }
+  .player img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s cubic-bezier(.2,.7,.2,1); }
+  .player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .play {
+    position: absolute; left: 50%; top: 50%; width: 68px; height: 68px; margin: -34px 0 0 -34px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; padding-left: 4px;
+    color: var(--ink); font-size: 20px; border: 1px solid rgba(255,255,255,.6);
+    background: rgba(245,244,242,.55); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    transition: transform .3s ease, background .3s;
+  }
+  @media (hover: hover) {
+    .player:hover img { transform: scale(1.03); }
+    .player:hover .play { transform: scale(1.08); background: rgba(245,244,242,.8); }
+  }
+  .player.playing { cursor: default; }
+  .player.playing .play, .player.playing img { display: none; }
+
+  @media (max-width: 760px) {
+    .work-head { flex-direction: column; gap: 2px; }
+    .vertical .clip { width: 46%; }
+    .play { width: 54px; height: 54px; margin: -27px 0 0 -27px; font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="solid">
+  <a class="logo" href="./">REBECCA CHU</a>
+  <nav><a href="./">Graphic<span class="long"> Design</span></a><a href="illustration.html">Illustration</a><a href="motion.html" class="active">Motion</a></nav>
+</header>
+
+<section class="page-title">
+  <h1>Motion</h1>
+</section>
+
+<div class="reel">
+
+  <section class="work">
+    <div class="work-head"><h2>2027 更大的敘事</h2><p>SERIES　VERTICAL</p></div>
+    <div class="vertical">
+      <figure class="clip">
+        <div class="player" data-vimeo="1245437306" aria-label="播放 2027 更大的敘事 EP01">
+          <img src="works/motion/v-1245437306-sm.jpg" srcset="works/motion/v-1245437306-sm.jpg 384w, works/motion/v-1245437306.jpg 768w" sizes="(max-width: 760px) 46vw, 300px" width="768" height="1366" alt="2027 更大的敘事 EP01 封面" loading="lazy">
+          <span class="play">▶</span>
+        </div>
+        <figcaption>EP01　0:45</figcaption>
+      </figure>
+      <figure class="clip">
+        <div class="player" data-vimeo="1245437307" aria-label="播放 2027 更大的敘事 EP02">
+          <img src="works/motion/v-1245437307-sm.jpg" srcset="works/motion/v-1245437307-sm.jpg 384w, works/motion/v-1245437307.jpg 768w" sizes="(max-width: 760px) 46vw, 300px" width="768" height="1366" alt="2027 更大的敘事 EP02 封面" loading="lazy">
+          <span class="play">▶</span>
+        </div>
+        <figcaption>EP02　1:00</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="work wide">
+    <div class="work-head"><h2>Hey Brother</h2><p>2020　2D ANIMATION　1:13</p></div>
+    <div class="player" data-vimeo="427283787" aria-label="播放 Hey Brother">
+      <img src="works/motion/v-427283787.jpg" srcset="works/motion/v-427283787-sm.jpg 640w, works/motion/v-427283787.jpg 1280w" sizes="(max-width: 1280px) 90vw, 1136px" width="1280" height="720" alt="Hey Brother 封面" loading="lazy">
+      <span class="play">▶</span>
+    </div>
+    <p class="credits">Choreography：Dylan Mayoral　Music：Avicii “Hey Brother”　Drawing：壹人可行</p>
+  </section>
+
+</div>
+
+<footer>© 2026 REBECCA CHU</footer>
+
+<script>
+  // 點封面才載入 Vimeo 播放器並自動播放；同時只播放一支
+  document.querySelectorAll('.player[data-vimeo]').forEach(p => {
+    p.setAttribute('role', 'button'); p.tabIndex = 0;
+    const start = () => {
+      if (p.classList.contains('playing')) return;
+      document.querySelectorAll('.player.playing').forEach(o => { o.querySelector('iframe').remove(); o.classList.remove('playing'); });
+      const f = document.createElement('iframe');
+      f.src = `https://player.vimeo.com/video/${p.dataset.vimeo}?autoplay=1&title=0&byline=0&portrait=0&dnt=1`;
+      f.allow = 'autoplay; fullscreen; picture-in-picture'; f.allowFullscreen = true; f.title = p.getAttribute('aria-label');
+      p.appendChild(f); p.classList.add('playing');
+    };
+    p.addEventListener('click', start);
+    p.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); start(); } });
+  });
+</script>
+<script src="js/nav.js"></script>
+</body>
+</html>
