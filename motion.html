@@ -58,6 +58,7 @@
   .info[open] summary i::after { transform: rotate(0deg); }
   .info-body { display: grid; grid-template-columns: minmax(220px, 1fr) 2fr; gap: 8px 64px; padding: 6px 0 8px; }
   .info .meta { margin: 0; }
+  .info-body.no-desc { grid-template-columns: 1fr; }
   .info .desc p { font-size: 15px; }
   .todo { color: #b4762f; }
   @supports (interpolate-size: allow-keywords) {
@@ -122,13 +123,13 @@
   // meta：資訊欄的項目　desc：作品介紹（可留空）
   const VIDEOS = [
     { id: '1245437306', title: '2027 更大的敘事 EP01', ratio: 9 / 16, duration: '0:45', sub: '動態設計・直式短片',
-      meta: [['類別', '動態設計／直式短片'], ['年份', '待補'], ['片長', '0:45'], ['負責', '待補'], ['工具', '待補']],
+      meta: [['類別', '動態設計／直式短片'], ['年份', '2027'], ['工具', 'Illustrator、Premiere、Claude']],
       desc: '' },
     { id: '1245437307', title: '2027 更大的敘事 EP02', ratio: 9 / 16, duration: '1:00', sub: '動態設計・直式短片',
-      meta: [['類別', '動態設計／直式短片'], ['年份', '待補'], ['片長', '1:00'], ['負責', '待補'], ['工具', '待補']],
+      meta: [['類別', '動態設計／直式短片'], ['年份', '2027'], ['工具', 'Illustrator、Premiere、Claude']],
       desc: '' },
-    { id: '427283787', title: 'Hey Brother', ratio: 16 / 9, duration: '1:13', sub: '2020・2D 動畫',
-      meta: [['類別', '2D 動畫'], ['年份', '2020'], ['片長', '1:13'], ['編舞', 'Dylan Mayoral'], ['音樂', 'Avicii “Hey Brother”'], ['繪製', '壹人可行']],
+    { id: '427283787', title: 'Hey Brother', ratio: 16 / 9, duration: '1:13', sub: '2D 手繪動畫',
+      meta: [['類別', '2D 手繪動畫'], ['年份', '2020'], ['編舞', 'Dylan Mayoral'], ['音樂', 'Avicii “Hey Brother”'], ['繪製', '壹人可行']],
       desc: '' },
   ];
   const cover = (v, size) => `works/motion/v-${v.id}${size === 'sm' ? '-sm' : ''}.jpg`;
@@ -187,12 +188,12 @@
       body.innerHTML = `
         <details class="info"${document.querySelector('.info[open]') ? ' open' : ''}>
           <summary>
-            <span class="t"><h2>${esc(v.title)}</h2><span class="sub">${esc(v.sub)}・${v.duration}</span></span>
+            <span class="t"><h2>${esc(v.title)}</h2><span class="sub">${esc(v.sub)}</span></span>
             <span class="lbl">INFO<i></i></span>
           </summary>
-          <div class="info-body">
+          <div class="info-body${v.desc ? '' : ' no-desc'}">
             <ul class="meta">${v.meta.map(([k, x]) => `<li><span>${esc(k)}</span><span>${val(x)}</span></li>`).join('')}</ul>
-            <div class="desc">${v.desc ? `<p>${esc(v.desc)}</p>` : '<p class="todo">作品介紹待補（可留空）</p>'}</div>
+            ${v.desc ? `<div class="desc"><p>${esc(v.desc)}</p></div>` : ''}
           </div>
         </details>`;
       body.classList.remove('fade');
