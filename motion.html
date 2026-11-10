@@ -69,22 +69,21 @@
   /* ---------- 總覽：點選切換影片 ---------- */
   .all { margin-top: clamp(56px, 7vw, 88px); }
   .all h3 { font-size: 12px; font-weight: 400; letter-spacing: .22em; color: var(--muted); margin-bottom: 18px; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 28px 16px; }
-  .card { text-align: left; background: none; border: 0; padding: 0; cursor: pointer; font: inherit; color: inherit; }
-  .card .thumb { position: relative; aspect-ratio: 16 / 9; border-radius: var(--r); overflow: hidden; background: #1d1d1b; }
-  .card .thumb .backdrop { position: absolute; inset: -20px; background-size: cover; background-position: center; filter: blur(20px) brightness(.75); }
-  .card .thumb img { position: absolute; inset: 0; margin: auto; height: 100%; width: auto; max-width: 100%; object-fit: contain; transition: transform .8s cubic-bezier(.2,.7,.2,1); }
+  /* 每張縮圖依影片原始比例、同樣高度排成一排（直式就是直式） */
+  .grid { --th: 240px; display: flex; flex-wrap: wrap; gap: 28px 14px; }
+  .card { flex: 0 0 auto; width: calc(var(--th) * var(--ratio)); text-align: left; background: none; border: 0; padding: 0; cursor: pointer; font: inherit; color: inherit; }
+  .card .thumb { position: relative; height: var(--th); border-radius: var(--r); overflow: hidden; background: #e9e7e3; }
+  .card .thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s cubic-bezier(.2,.7,.2,1); }
   .card .thumb .dur { position: absolute; right: 8px; bottom: 8px; padding: 2px 7px; border-radius: 6px; font-size: 11px; letter-spacing: .06em; color: #fff; background: rgba(0,0,0,.55); }
   .card .thumb .now-tag { position: absolute; left: 8px; top: 8px; padding: 3px 8px; border-radius: 6px; font-size: 10px; letter-spacing: .18em; color: var(--ink); background: rgba(245,244,242,.85); display: none; }
   .card.on .thumb { outline: 2px solid var(--ink); outline-offset: 3px; }
   .card.on .now-tag { display: block; }
   @media (hover: hover) { .card:hover .thumb img { transform: scale(1.04); } }
-  .card b { display: block; margin-top: 12px; font-family: "Noto Sans TC"; font-weight: 500; font-size: 15px; letter-spacing: .04em; }
+  .card b { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 12px; font-family: "Noto Sans TC"; font-weight: 500; font-size: 14px; line-height: 1.5; letter-spacing: .04em; }
   .card small { display: block; margin-top: 2px; font-size: 12px; letter-spacing: .1em; color: var(--muted); font-family: "Noto Sans TC"; }
-
   @media (max-width: 760px) {
     .info-body { grid-template-columns: 1fr; gap: 16px; }
-    .grid { grid-template-columns: 1fr 1fr; gap: 20px 10px; }
+    .grid { --th: 180px; gap: 20px 10px; }
     .play { width: 54px; height: 54px; margin: -27px 0 0 -27px; font-size: 16px; }
   }
 </style>
@@ -157,9 +156,8 @@
     frame.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); start(); } });
 
     // 總覽卡片
-    const c = document.createElement('button'); c.className = 'card'; c.type = 'button';
-    c.innerHTML = `<div class="thumb"><div class="backdrop" style="background-image:url('${cover(v, 'sm')}')"></div>
-      <img src="${cover(v, 'sm')}" alt="" loading="lazy"><span class="now-tag">NOW</span><span class="dur">${v.duration}</span></div>
+    const c = document.createElement('button'); c.className = 'card'; c.type = 'button'; c.style.setProperty('--ratio', v.ratio);
+    c.innerHTML = `<div class="thumb"><img src="${cover(v, 'sm')}" alt="" loading="lazy"><span class="now-tag">NOW</span><span class="dur">${v.duration}</span></div>
       <b>${esc(v.title)}</b><small>${esc(v.sub)}</small>`;
     c.addEventListener('click', () => { go(n); document.querySelector('.stage').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
     grid.appendChild(c);
