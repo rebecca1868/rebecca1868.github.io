@@ -9,24 +9,22 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/project.css">
+<link rel="stylesheet" href="css/viewer.css">
 <style>
   /* 沒有刊頭的頁面：導覽列一開始就是實心、跟著頁面捲動 */
   header { position: sticky; }
-  /* 分類頁開頭（平面設計、插畫共用）：大字英文分類名 → 中文名＋說明 → 深色長線＋作品數量 */
+  /* 分類頁開頭（平面設計、插畫共用）：英文分類名 → 深色長線 */
   .page-title { padding: clamp(48px, 7vw, 96px) var(--gutter) 0; max-width: 1440px; margin: 0 auto; }
   .page-title h1 { font-family: "Inter", sans-serif; font-weight: 300; font-size: clamp(28px, 3.2vw, 44px); line-height: 1.15; letter-spacing: .04em; }
-  .page-title .sub { margin-top: 12px; font-family: "Noto Sans TC"; font-size: 15px; color: var(--muted); letter-spacing: .1em; }
-  .page-title .sub b { color: var(--ink); font-weight: 500; margin-right: 14px; }
-  .page-title .rule { margin-top: clamp(32px, 4vw, 48px); padding-bottom: 14px; border-bottom: 1px solid var(--ink); text-align: right; font-size: 12px; letter-spacing: .2em; color: var(--muted); }
+  .page-title .rule { margin-top: clamp(32px, 4vw, 48px); padding-bottom: 14px; border-bottom: 1px solid var(--ink); }
 
-  /* 瀑布流：依每張插畫的原比例錯落排列 */
-  .wall { columns: 2 420px; column-gap: 24px; padding: 40px var(--gutter) 120px; max-width: 1440px; margin: 0 auto; }
-  .tile { break-inside: avoid; margin-bottom: 24px; position: relative; overflow: hidden; cursor: zoom-in; }
+  /* 瀑布流：依每張插畫的原比例錯落排列，圓角、較小的間距 */
+  .wall { columns: 2 380px; column-gap: 12px; padding: 40px var(--gutter) 120px; max-width: 1440px; margin: 0 auto; }
+  .tile { break-inside: avoid; margin-bottom: 12px; position: relative; overflow: hidden; border-radius: var(--r); }
   .tile img { transition: transform .8s cubic-bezier(.2,.7,.2,1); }
-  .tile:hover img { transform: scale(1.04); }
   /* 滑過去時：整張插畫蒙上一層霧面玻璃，作品名稱清楚浮在中間 */
   .tile figcaption {
-    position: absolute; inset: 0; margin: 0;
+    position: absolute; inset: 0; margin: 0; pointer-events: none;
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
     color: var(--ink); font-family: "Noto Sans TC"; font-size: 16px; font-weight: 500; letter-spacing: .12em;
     background: rgba(245,244,242,.38);
@@ -35,32 +33,11 @@
   }
   .tile figcaption small { font-size: 11px; font-weight: 400; letter-spacing: .2em; color: #5f5d58; }
   .tile figcaption .hint { display: none; margin-top: 10px; font-size: 11px; font-weight: 400; letter-spacing: .2em; color: #5f5d58; }
-  @media (hover: hover) { .tile:hover figcaption { opacity: 1; } }
+  @media (hover: hover) { .tile:hover figcaption { opacity: 1; } .tile:hover img { transform: scale(1.03); } }
   /* 觸控裝置沒有「滑過去」：點第一下出現霧面，再點一下放大 */
   @media (hover: none) {
     .tile.show figcaption { opacity: 1; }
     .tile figcaption .hint { display: block; }
-  }
-  /* 全螢幕瀏覽：背後的頁面變成霧面玻璃，插畫清楚浮在上面 */
-  .lightbox {
-    position: fixed; inset: 0; z-index: 50;
-    background: rgba(245,244,242,.55);
-    -webkit-backdrop-filter: blur(28px) saturate(1.1); backdrop-filter: blur(28px) saturate(1.1);
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 56px 24px 24px;
-    cursor: zoom-out; opacity: 0; pointer-events: none; transition: opacity .35s;
-  }
-  .lightbox.open { opacity: 1; pointer-events: auto; }
-  .lightbox img { width: auto; max-width: 100%; max-height: calc(100% - 64px); box-shadow: 0 30px 70px -30px rgba(40,35,30,.45); }
-  .lb-caption { color: var(--ink); font-family: "Noto Sans TC"; font-size: 14px; letter-spacing: .1em; text-align: center; }
-  .lb-caption small { display: block; font-size: 11px; letter-spacing: .18em; color: var(--muted); }
-  .lb-nav { position: fixed; top: 50%; transform: translateY(-50%); background: none; border: 0; color: var(--ink); font-size: 28px; padding: 20px; cursor: pointer; opacity: .55; }
-  .lb-nav:hover { opacity: 1; }
-  .lb-prev { left: 8px; } .lb-next { right: 8px; }
-  .lb-count { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); color: var(--muted); font-size: 12px; letter-spacing: .2em; }
-  @media (max-width: 760px) {
-    .wall { column-gap: 0; }
-    .tile { margin-bottom: 16px; }
-    .lb-nav { display: none; }                           /* 手機用左右滑切換 */
   }
 </style>
 </head>
@@ -78,63 +55,28 @@
 
 <section class="wall">
   <!-- tiles:start -->
-  <figure class="tile"><img src="works/illustration/il-68f68974.jpg" srcset="works/illustration/il-68f68974-sm.jpg 800w, works/illustration/il-68f68974.jpg 1600w" sizes="(max-width: 760px) 92vw, 45vw" width="1600" height="1136" alt="樹洞一號" loading="lazy" decoding="async"><figcaption>樹洞一號<small>2026　賀卡</small></figcaption></figure>
-  <figure class="tile"><img src="works/illustration/il-edb847fd.jpg" srcset="works/illustration/il-edb847fd-sm.jpg 800w, works/illustration/il-edb847fd.jpg 1600w" sizes="(max-width: 760px) 92vw, 45vw" width="1600" height="1136" alt="樹洞二號" loading="lazy" decoding="async"><figcaption>樹洞二號<small>2026　賀卡</small></figcaption></figure>
+  <figure class="tile"><img data-viewer="works/illustration/il-68f68974.jpg" src="works/illustration/il-68f68974.jpg" srcset="works/illustration/il-68f68974-sm.jpg 800w, works/illustration/il-68f68974.jpg 1600w" sizes="(max-width: 760px) 92vw, 45vw" width="1600" height="1136" alt="樹洞一號" loading="lazy" decoding="async"><figcaption>樹洞一號<small>2026　賀卡</small></figcaption></figure>
+  <figure class="tile"><img data-viewer="works/illustration/il-edb847fd.jpg" src="works/illustration/il-edb847fd.jpg" srcset="works/illustration/il-edb847fd-sm.jpg 800w, works/illustration/il-edb847fd.jpg 1600w" sizes="(max-width: 760px) 92vw, 45vw" width="1600" height="1136" alt="樹洞二號" loading="lazy" decoding="async"><figcaption>樹洞二號<small>2026　賀卡</small></figcaption></figure>
   <!-- tiles:end -->
 </section>
 
 <footer>© 2026 REBECCA CHU</footer>
 
-<div class="lightbox">
-  <span class="lb-count"></span>
-  <img alt="">
-  <div class="lb-caption"></div>
-  <button class="lb-nav lb-prev" aria-label="上一張">←</button>
-  <button class="lb-nav lb-next" aria-label="下一張">→</button>
-</div>
-
 <script>
-  // 全螢幕瀏覽：點圖開啟、左右切換（按鈕、鍵盤方向鍵、手機左右滑）、點背景或 Esc 關閉
-  const tiles = [...document.querySelectorAll('.tile')];
-  const box = document.querySelector('.lightbox'), boxImg = box.querySelector('img');
-  const cap = box.querySelector('.lb-caption'), count = box.querySelector('.lb-count');
-  let i = 0;
-  const show = n => {
-    i = (n + tiles.length) % tiles.length;
-    const t = tiles[i], im = t.querySelector('img');
-    boxImg.src = im.src;                                   // 放大時用大圖
-    cap.innerHTML = t.querySelector('figcaption').innerHTML.replace(/<span class="hint">.*?<\/span>/, '');
-    count.textContent = `${i + 1} / ${tiles.length}`;
-    box.classList.add('open');
-  };
-  const touch = matchMedia('(hover: none)').matches;
-  tiles.forEach((t, n) => {
-    if (touch) t.querySelector('figcaption').insertAdjacentHTML('beforeend', '<span class="hint">再點一下放大</span>');
-    t.addEventListener('click', () => {
-      if (touch && !t.classList.contains('show')) {          // 觸控：第一下只顯示霧面和名稱
+  // 觸控裝置：第一下只顯示霧面和名稱，第二下才交給放大瀏覽（js/viewer.js）
+  if (matchMedia('(hover: none)').matches) {
+    const tiles = [...document.querySelectorAll('.tile')];
+    tiles.forEach(t => {
+      t.querySelector('figcaption').insertAdjacentHTML('beforeend', '<span class="hint">再點一下放大</span>');
+      t.addEventListener('click', e => {
+        if (t.classList.contains('show')) { t.classList.remove('show'); return; }
+        e.stopPropagation(); e.preventDefault();
         tiles.forEach(x => x.classList.toggle('show', x === t));
-        return;
-      }
-      t.classList.remove('show'); show(n);
+      }, true);
     });
-  });
-  box.querySelector('.lb-prev').addEventListener('click', e => { e.stopPropagation(); show(i - 1); });
-  box.querySelector('.lb-next').addEventListener('click', e => { e.stopPropagation(); show(i + 1); });
-  box.addEventListener('click', () => box.classList.remove('open'));
-  addEventListener('keydown', e => {
-    if (!box.classList.contains('open')) return;
-    if (e.key === 'Escape') box.classList.remove('open');
-    if (e.key === 'ArrowLeft') show(i - 1);
-    if (e.key === 'ArrowRight') show(i + 1);
-  });
-  let x0 = null;
-  box.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
-  box.addEventListener('touchend', e => {
-    if (x0 === null) return;
-    const dx = e.changedTouches[0].clientX - x0; x0 = null;
-    if (Math.abs(dx) > 50) { e.preventDefault(); show(dx < 0 ? i + 1 : i - 1); }
-  });
+  }
 </script>
+<script src="js/viewer.js"></script>
 <script src="js/blur-up.js"></script>
 <script src="js/nav.js"></script>
 </body>

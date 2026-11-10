@@ -1,0 +1,71 @@
+/* 圖片瀏覽器（參考 ramka 的操作感）：
+   從原位置放大、左右露出前後張、底部縮圖列、放大細看、往下拉關閉 */
+.viewer {
+  position: fixed; inset: 0; z-index: 80;
+  display: grid; grid-template-rows: auto 1fr auto auto;
+  background: rgba(245,244,242,.72);
+  -webkit-backdrop-filter: blur(28px) saturate(1.1); backdrop-filter: blur(28px) saturate(1.1);
+  opacity: 0; visibility: hidden; transition: opacity .3s, visibility 0s .3s;
+}
+.viewer.open { opacity: 1; visibility: visible; transition: opacity .3s; }
+.viewer.dragging { transition: none; }
+
+/* 上方工具列：張數、放大、關閉 */
+.v-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; }
+.v-count { font: 12px "Inter"; letter-spacing: .2em; color: var(--muted); }
+.v-tools { display: flex; gap: 8px; }
+.v-tools button {
+  width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line); background: rgba(255,255,255,.6);
+  color: var(--ink); font: 15px "Inter"; cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.v-tools button:hover { background: #fff; }
+
+/* 中間的滑動軌道：原生捲動＋吸附，左右露出前後張 */
+.v-track {
+  display: flex; gap: 2.5vw; overflow-x: auto; overflow-y: hidden;
+  scroll-snap-type: x mandatory; scrollbar-width: none;
+  padding: 0 10vw; scroll-padding: 0 10vw; min-height: 0;
+}
+.v-track::-webkit-scrollbar { display: none; }
+.v-track.locked { overflow-x: hidden; }
+.v-slide {
+  flex: 0 0 80vw; scroll-snap-align: center; scroll-snap-stop: always;
+  display: flex; align-items: center; justify-content: center; min-height: 0; overflow: hidden;
+}
+.v-slide img {
+  width: auto; height: auto; max-width: 100%; max-height: 100%;
+  border-radius: var(--r, 14px); box-shadow: 0 30px 70px -30px rgba(40,35,30,.45);
+  transition: transform .35s cubic-bezier(.2,.7,.2,1), opacity .3s;
+  cursor: zoom-in; user-select: none; -webkit-user-drag: none; touch-action: pan-x;
+}
+.v-slide:not(.current) img { opacity: .45; }
+.v-slide img.zoomed { cursor: grab; transition: none; touch-action: none; }
+.v-slide img.zoomed.anim { transition: transform .35s cubic-bezier(.2,.7,.2,1); }
+
+/* 名稱 */
+.v-caption { text-align: center; padding: 14px 16px 6px; font-family: "Noto Sans TC"; font-size: 14px; letter-spacing: .1em; color: var(--ink); min-height: 1.5em; }
+.v-caption small { margin-left: 10px; font-size: 11px; letter-spacing: .18em; color: var(--muted); }
+
+/* 底部縮圖列 */
+.v-thumbs { display: flex; gap: 8px; justify-content: center; padding: 10px 16px 18px; overflow-x: auto; scrollbar-width: none; }
+.v-thumbs::-webkit-scrollbar { display: none; }
+.v-thumbs button {
+  flex: 0 0 auto; width: 52px; height: 52px; padding: 0; border: 2px solid transparent; border-radius: 8px;
+  overflow: hidden; background: none; cursor: pointer; opacity: .55; transition: opacity .2s, border-color .2s;
+}
+.v-thumbs button img { width: 100%; height: 100%; object-fit: cover; }
+.v-thumbs button.on { opacity: 1; border-color: var(--ink); }
+.v-thumbs button:hover { opacity: 1; }
+
+/* 從原位置放大／縮回的動畫時間 */
+::view-transition-group(viewer-img) { animation-duration: .45s; animation-timing-function: cubic-bezier(.2,.7,.2,1); }
+
+@media (max-width: 760px) {
+  .v-track { padding: 0 6vw; scroll-padding: 0 6vw; gap: 3vw; }
+  .v-slide { flex-basis: 88vw; }
+  .v-thumbs button { width: 44px; height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(viewer-img) { animation-duration: 0s; }
+  .viewer, .v-slide img { transition: none; }
+}

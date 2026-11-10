@@ -55,7 +55,7 @@
   /* 作品列表 */
   .works { padding: 40px var(--gutter) 120px; max-width: 1440px; margin: 0 auto; }
   .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 56px 40px; }
-  .card .thumb { overflow: hidden; background: #ddd; }
+  .card .thumb { overflow: hidden; background: #ddd; border-radius: 14px; }
   .card .thumb img { aspect-ratio: 4 / 3; object-fit: cover; transition: transform 1.2s cubic-bezier(.2,.7,.2,1); }
   .card:hover .thumb img { transform: scale(1.04); }
   .card h2 { margin-top: 18px; font-family: "Noto Sans TC"; font-weight: 500; font-size: 18px; letter-spacing: .04em; }
@@ -70,6 +70,7 @@
     header nav .en { display: none; }
     header nav { gap: 24px; }
     .grid { grid-template-columns: 1fr; gap: 40px; }
+    .card .thumb { border-radius: 10px; }
   }
 </style>
 </head>
