@@ -67,7 +67,7 @@
   <h1>Illustration</h1>
   <label class="zoom" title="調整圖片大小">
     <svg viewBox="0 0 14 14" aria-hidden="true"><g fill="currentColor"><rect x="0" y="0" width="4" height="4"/><rect x="5" y="0" width="4" height="4"/><rect x="10" y="0" width="4" height="4"/><rect x="0" y="5" width="4" height="4"/><rect x="5" y="5" width="4" height="4"/><rect x="10" y="5" width="4" height="4"/><rect x="0" y="10" width="4" height="4"/><rect x="5" y="10" width="4" height="4"/><rect x="10" y="10" width="4" height="4"/></g></svg>
-    <input type="range" min="1" step="1" aria-label="圖片大小" autocomplete="off">
+    <input type="range" min="1" step="0.01" aria-label="圖片大小" autocomplete="off">
     <svg viewBox="0 0 14 14" aria-hidden="true"><rect x=".5" y=".5" width="13" height="13" rx="1.5" fill="none" stroke="currentColor"/></svg>
   </label>
 </section>
@@ -128,16 +128,29 @@
       imgs.forEach(i => i.sizes = `${vw}vw`);              // 圖變大時改載清晰的大圖
     };
     apply(cols0);
-    let tr = null;
+    let tr = null, current = cols0;
+    const colsOf = v => maxCols + 1 - Math.round(v);
+    // 拖動時滑桿連續移動，欄數只在跨過中間點時才切換（欄數沒變就不重跑動畫）
     range.addEventListener('input', () => {
-      const cols = maxCols + 1 - parseInt(range.value, 10);
+      const cols = colsOf(parseFloat(range.value));
+      if (cols === current) return;
+      current = cols;
       if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) { apply(cols); return; }
       if (tr) tr.skipTransition();
       tiles.forEach((t, i) => t.style.viewTransitionName = 'tile-' + i);
       tr = document.startViewTransition(() => apply(cols));
       tr.finished.finally(() => { tiles.forEach(t => t.style.viewTransitionName = ''); tr = null; });
     });
-  })();
+    // 放開後，滑桿輕輕滑到最接近的那一格
+    range.addEventListener('change', () => {
+      const from = parseFloat(range.value), to = Math.round(from), t0 = performance.now();
+      const step = now => {
+        const k = Math.min(1, (now - t0) / 180), e = 1 - Math.pow(1 - k, 3);
+        range.value = from + (to - from) * e;
+        if (k < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    });  })();
 </script>
 <script src="js/viewer.js"></script><script src="js/blur-up.js"></script>
 <script src="js/nav.js"></script>
