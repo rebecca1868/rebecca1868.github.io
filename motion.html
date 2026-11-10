@@ -20,7 +20,8 @@
   /* ---------- 播放區：左右滑動切換影片 ---------- */
   .stage { position: relative; }
   .track {
-    display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+    /* 只能左右捲動：上下方向固定不捲，滑鼠滾輪才會直接捲動整個頁面 */
+    display: flex; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none;
     transition: height .45s cubic-bezier(.2,.7,.2,1);
   }
   .track::-webkit-scrollbar { display: none; }
