@@ -13,50 +13,23 @@
 <style>
   /* 沒有刊頭的頁面：導覽列一開始就是實心、跟著頁面捲動 */
   header { position: sticky; }
-  .page-title { padding: clamp(48px, 7vw, 96px) var(--gutter) 0; max-width: 1440px; margin: 0 auto; }
+  .page-title { padding: clamp(40px, 6vw, 80px) var(--gutter) 0; max-width: 1440px; margin: 0 auto; }
   .page-title h1 { font-family: "Inter", sans-serif; font-weight: 300; font-size: clamp(28px, 3.2vw, 44px); line-height: 1.15; letter-spacing: .04em; }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 32px var(--gutter) 120px; }
 
-  .reel { max-width: 1280px; margin: 0 auto; padding: 40px var(--gutter) 0; }
-  .work { padding-bottom: clamp(72px, 9vw, 120px); }
-  .work-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 20px; }
-  .work-head h2 { font-family: "Noto Sans TC"; font-weight: 500; font-size: 18px; letter-spacing: .06em; }
-  .work-head p { font-size: 12px; letter-spacing: .16em; color: var(--muted); white-space: nowrap; }
-  /* 影片下方的作品資訊：可展開／收合 */
-  .info { margin-top: 8px; }
-  .info summary {
-    list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
-    padding: 12px 2px; font-size: 12px; letter-spacing: .2em; color: var(--muted); user-select: none;
+  /* ---------- 播放區：左右滑動切換影片 ---------- */
+  .stage { position: relative; border-radius: var(--r); overflow: hidden; background: #1d1d1b; }
+  .track {
+    display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+    height: min(72vh, 640px);
   }
-  .info summary::-webkit-details-marker { display: none; }
-  .info summary:hover .lbl { color: var(--ink); }
-  .info summary .t { font-family: "Noto Sans TC"; font-size: 15px; font-weight: 500; letter-spacing: .06em; color: var(--ink); }
-  .info summary .lbl { display: flex; align-items: center; gap: 12px; }
-  .info summary i { position: relative; width: 11px; height: 11px; }
-  .info summary i::before, .info summary i::after { content: ""; position: absolute; left: 0; top: 5px; width: 11px; height: 1px; background: currentColor; transition: transform .3s ease; }
-  .info summary i::after { transform: rotate(90deg); }
-  .info[open] summary i::after { transform: rotate(0deg); }
-  .info .info-body { display: grid; grid-template-columns: minmax(220px, 1fr) 2fr; gap: 8px 64px; padding: 6px 2px 24px; }
-  .info .meta { margin: 0; }
-  .info .desc p { font-size: 15px; }
-  .info .todo { color: #b4762f; }
-  /* 支援的瀏覽器有展開動畫 */
-  @supports (interpolate-size: allow-keywords) {
-    .info { interpolate-size: allow-keywords; }
-    .info::details-content { block-size: 0; overflow: hidden; transition: block-size .4s ease, content-visibility .4s allow-discrete; }
-    .info[open]::details-content { block-size: auto; }
-  }
-  @media (max-width: 760px) { .info .info-body { grid-template-columns: 1fr; gap: 16px; } }
-  /* 直式影片：放在素色帶上，並排置中 */
-  .vertical { background: #e9e7e3; border-radius: var(--r); padding: clamp(28px, 5vw, 64px) 16px; display: flex; justify-content: center; gap: clamp(16px, 4vw, 56px); }
-  .vertical .clip { width: min(300px, 42%); }
-  .vertical .player { aspect-ratio: 9 / 16; }
-  .wide .player { aspect-ratio: 16 / 9; }
-  .clip figcaption { margin-top: 12px; text-align: center; font-size: 12px; letter-spacing: .18em; color: var(--muted); }
-
-  /* 播放器：先只顯示封面，點了才載入 Vimeo（頁面打開比較快） */
-  .player { position: relative; overflow: hidden; border-radius: var(--r); background: #1d1d1b; cursor: pointer; }
-  .player img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s cubic-bezier(.2,.7,.2,1); }
-  .player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .track::-webkit-scrollbar { display: none; }
+  .slide { position: relative; flex: 0 0 100%; scroll-snap-align: center; scroll-snap-stop: always; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  /* 影片後方：封面的霧面模糊版，直式橫式都不會有黑邊 */
+  .slide .backdrop { position: absolute; inset: -40px; background-size: cover; background-position: center; filter: blur(36px) saturate(1.1) brightness(.75); transform: scale(1.1); }
+  .frame { position: relative; overflow: hidden; border-radius: calc(var(--r) - 4px); cursor: pointer; background: #000; box-shadow: 0 24px 60px -24px rgba(0,0,0,.6); }
+  .frame img { width: 100%; height: 100%; object-fit: cover; }
+  .frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
   .play {
     position: absolute; left: 50%; top: 50%; width: 68px; height: 68px; margin: -34px 0 0 -34px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center; padding-left: 4px;
@@ -64,16 +37,67 @@
     background: rgba(245,244,242,.55); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
     transition: transform .3s ease, background .3s;
   }
-  @media (hover: hover) {
-    .player:hover img { transform: scale(1.03); }
-    .player:hover .play { transform: scale(1.08); background: rgba(245,244,242,.8); }
+  @media (hover: hover) { .frame:hover .play { transform: scale(1.08); background: rgba(245,244,242,.8); } }
+  .frame.playing { cursor: default; }
+  .frame.playing .play, .frame.playing img { display: none; }
+  /* 左右箭頭 */
+  .arrow {
+    position: absolute; top: 50%; z-index: 2; width: 44px; height: 44px; margin-top: -22px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,.35); color: #fff; font: 18px "Inter"; cursor: pointer;
+    background: rgba(255,255,255,.12); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    transition: background .2s, opacity .2s;
   }
-  .player.playing { cursor: default; }
-  .player.playing .play, .player.playing img { display: none; }
+  .arrow:hover { background: rgba(255,255,255,.28); }
+  .arrow[disabled] { opacity: 0; pointer-events: none; }
+  .arrow.prev { left: 16px; } .arrow.next { right: 16px; }
+
+  /* ---------- 影片資訊：跟著播放區切換 ---------- */
+  .now { padding: 20px 2px 0; }
+  .now-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
+  .now h2 { font-family: "Noto Sans TC"; font-weight: 500; font-size: clamp(18px, 2vw, 22px); letter-spacing: .05em; }
+  .now .count { font-size: 12px; letter-spacing: .2em; color: var(--muted); white-space: nowrap; }
+  .now .sub { margin-top: 4px; font-size: 13px; letter-spacing: .1em; color: var(--muted); font-family: "Noto Sans TC"; }
+  .now-body { transition: opacity .25s ease; }
+  .now-body.fade { opacity: 0; }
+  .info { margin-top: 6px; }
+  .info summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 12px; padding: 10px 0; font-size: 12px; letter-spacing: .2em; color: var(--muted); user-select: none; }
+  .info summary::-webkit-details-marker { display: none; }
+  .info summary:hover { color: var(--ink); }
+  .info summary i { position: relative; width: 11px; height: 11px; }
+  .info summary i::before, .info summary i::after { content: ""; position: absolute; left: 0; top: 5px; width: 11px; height: 1px; background: currentColor; transition: transform .3s ease; }
+  .info summary i::after { transform: rotate(90deg); }
+  .info[open] summary i::after { transform: rotate(0deg); }
+  .info-body { display: grid; grid-template-columns: minmax(220px, 1fr) 2fr; gap: 8px 64px; padding: 6px 0 8px; }
+  .info .meta { margin: 0; }
+  .info .desc p { font-size: 15px; }
+  .todo { color: #b4762f; }
+  @supports (interpolate-size: allow-keywords) {
+    .info { interpolate-size: allow-keywords; }
+    .info::details-content { block-size: 0; overflow: hidden; transition: block-size .4s ease, content-visibility .4s allow-discrete; }
+    .info[open]::details-content { block-size: auto; }
+  }
+
+  /* ---------- 總覽：點選切換影片 ---------- */
+  .all { margin-top: clamp(56px, 7vw, 88px); }
+  .all h3 { font-size: 12px; font-weight: 400; letter-spacing: .22em; color: var(--muted); margin-bottom: 18px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 28px 16px; }
+  .card { text-align: left; background: none; border: 0; padding: 0; cursor: pointer; font: inherit; color: inherit; }
+  .card .thumb { position: relative; aspect-ratio: 16 / 9; border-radius: var(--r); overflow: hidden; background: #1d1d1b; }
+  .card .thumb .backdrop { position: absolute; inset: -20px; background-size: cover; background-position: center; filter: blur(20px) brightness(.75); }
+  .card .thumb img { position: absolute; inset: 0; margin: auto; height: 100%; width: auto; max-width: 100%; object-fit: contain; transition: transform .8s cubic-bezier(.2,.7,.2,1); }
+  .card .thumb .dur { position: absolute; right: 8px; bottom: 8px; padding: 2px 7px; border-radius: 6px; font-size: 11px; letter-spacing: .06em; color: #fff; background: rgba(0,0,0,.55); }
+  .card .thumb .now-tag { position: absolute; left: 8px; top: 8px; padding: 3px 8px; border-radius: 6px; font-size: 10px; letter-spacing: .18em; color: var(--ink); background: rgba(245,244,242,.85); display: none; }
+  .card.on .thumb { outline: 2px solid var(--ink); outline-offset: 3px; }
+  .card.on .now-tag { display: block; }
+  @media (hover: hover) { .card:hover .thumb img { transform: scale(1.04); } }
+  .card b { display: block; margin-top: 12px; font-family: "Noto Sans TC"; font-weight: 500; font-size: 15px; letter-spacing: .04em; }
+  .card small { display: block; margin-top: 2px; font-size: 12px; letter-spacing: .1em; color: var(--muted); font-family: "Noto Sans TC"; }
 
   @media (max-width: 760px) {
-    .work-head { flex-direction: column; gap: 2px; }
-    .vertical .clip { width: 46%; }
+    .track { height: 68vh; }
+    .arrow { display: none; }                       /* 手機直接左右滑 */
+    .info-body { grid-template-columns: 1fr; gap: 16px; }
+    .grid { grid-template-columns: 1fr 1fr; gap: 20px 10px; }
     .play { width: 54px; height: 54px; margin: -27px 0 0 -27px; font-size: 16px; }
   }
 </style>
@@ -89,79 +113,134 @@
   <h1>Motion</h1>
 </section>
 
-<div class="reel">
+<main class="wrap">
+  <div class="stage">
+    <div class="track" aria-live="polite"></div>
+    <button class="arrow prev" aria-label="上一支影片">←</button>
+    <button class="arrow next" aria-label="下一支影片">→</button>
+  </div>
 
-  <section class="work">
-    <div class="vertical">
-      <figure class="clip">
-        <div class="player" data-vimeo="1245437306" aria-label="播放 2027 更大的敘事 EP01">
-          <img src="works/motion/v-1245437306-sm.jpg" srcset="works/motion/v-1245437306-sm.jpg 384w, works/motion/v-1245437306.jpg 768w" sizes="(max-width: 760px) 46vw, 300px" width="768" height="1366" alt="2027 更大的敘事 EP01 封面" loading="lazy">
-          <span class="play">▶</span>
-        </div>
-        <figcaption>EP01　0:45</figcaption>
-      </figure>
-      <figure class="clip">
-        <div class="player" data-vimeo="1245437307" aria-label="播放 2027 更大的敘事 EP02">
-          <img src="works/motion/v-1245437307-sm.jpg" srcset="works/motion/v-1245437307-sm.jpg 384w, works/motion/v-1245437307.jpg 768w" sizes="(max-width: 760px) 46vw, 300px" width="768" height="1366" alt="2027 更大的敘事 EP02 封面" loading="lazy">
-          <span class="play">▶</span>
-        </div>
-        <figcaption>EP02　1:00</figcaption>
-      </figure>
-    </div>
-    <details class="info">
-      <summary><span class="t">2027 更大的敘事</span><span class="lbl">INFO<i></i></span></summary>
-      <div class="info-body">
-        <ul class="meta">
-          <li><span>類別</span><span>動態設計／直式短片</span></li>
-          <li><span>年份</span><span class="todo">待補</span></li>
-          <li><span>片長</span><span>EP01 0:45　EP02 1:00</span></li>
-          <li><span>負責</span><span class="todo">待補</span></li>
-          <li><span>工具</span><span class="todo">待補</span></li>
-        </ul>
-        <div class="desc"><p class="todo">這裡放作品介紹：為什麼活動製作、想傳達的內容、畫面風格的想法。</p></div>
-      </div>
-    </details>
+  <section class="now">
+    <div class="now-body"></div>
   </section>
-  <section class="work wide">
 
-    <div class="player" data-vimeo="427283787" aria-label="播放 Hey Brother">
-      <img src="works/motion/v-427283787.jpg" srcset="works/motion/v-427283787-sm.jpg 640w, works/motion/v-427283787.jpg 1280w" sizes="(max-width: 1280px) 90vw, 1136px" width="1280" height="720" alt="Hey Brother 封面" loading="lazy">
-      <span class="play">▶</span>
-    </div>
-    <details class="info">
-      <summary><span class="t">Hey Brother</span><span class="lbl">INFO<i></i></span></summary>
-      <div class="info-body">
-        <ul class="meta">
-          <li><span>類別</span><span>2D 動畫</span></li>
-          <li><span>年份</span><span>2020</span></li>
-          <li><span>片長</span><span>1:13</span></li>
-          <li><span>編舞</span><span>Dylan Mayoral</span></li>
-          <li><span>音樂</span><span>Avicii “Hey Brother”</span></li>
-          <li><span>繪製</span><span>壹人可行</span></li>
-        </ul>
-        <div class="desc"><p class="todo">這裡放作品介紹（可留空）。</p></div>
-      </div>
-    </details>  </section>
-
-</div>
+  <section class="all">
+    <h3>ALL VIDEOS</h3>
+    <div class="grid"></div>
+  </section>
+</main>
 
 <footer>© 2026 REBECCA CHU</footer>
 
 <script>
-  // 點封面才載入 Vimeo 播放器並自動播放；同時只播放一支
-  document.querySelectorAll('.player[data-vimeo]').forEach(p => {
-    p.setAttribute('role', 'button'); p.tabIndex = 0;
+  // ===== 影片清單：新增影片時，在這裡加一筆就好 =====
+  // id：Vimeo 影片編號　ratio：影片比例（直式 9/16、橫式 16/9）
+  // meta：資訊欄的項目　desc：作品介紹（可留空）
+  const VIDEOS = [
+    { id: '1245437306', title: '2027 更大的敘事 EP01', ratio: 9 / 16, duration: '0:45', sub: '動態設計・直式短片',
+      meta: [['類別', '動態設計／直式短片'], ['年份', '待補'], ['片長', '0:45'], ['負責', '待補'], ['工具', '待補']],
+      desc: '' },
+    { id: '1245437307', title: '2027 更大的敘事 EP02', ratio: 9 / 16, duration: '1:00', sub: '動態設計・直式短片',
+      meta: [['類別', '動態設計／直式短片'], ['年份', '待補'], ['片長', '1:00'], ['負責', '待補'], ['工具', '待補']],
+      desc: '' },
+    { id: '427283787', title: 'Hey Brother', ratio: 16 / 9, duration: '1:13', sub: '2020・2D 動畫',
+      meta: [['類別', '2D 動畫'], ['年份', '2020'], ['片長', '1:13'], ['編舞', 'Dylan Mayoral'], ['音樂', 'Avicii “Hey Brother”'], ['繪製', '壹人可行']],
+      desc: '' },
+  ];
+  const cover = (v, size) => `works/motion/v-${v.id}${size === 'sm' ? '-sm' : ''}.jpg`;
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const val = s => s === '待補' ? '<span class="todo">待補</span>' : esc(s);
+
+  const track = document.querySelector('.track'), body = document.querySelector('.now-body'), grid = document.querySelector('.grid');
+  const prevBtn = document.querySelector('.arrow.prev'), nextBtn = document.querySelector('.arrow.next');
+
+  // 建立播放區的每一張投影片
+  VIDEOS.forEach((v, n) => {
+    const s = document.createElement('div'); s.className = 'slide';
+    s.innerHTML = `<div class="backdrop" style="background-image:url('${cover(v, 'sm')}')"></div>
+      <div class="frame" role="button" tabindex="0" aria-label="播放 ${esc(v.title)}">
+        <img src="${cover(v)}" alt="${esc(v.title)} 封面" ${n ? 'loading="lazy"' : ''}><span class="play">▶</span></div>`;
+    track.appendChild(s);
+    const frame = s.querySelector('.frame');
     const start = () => {
-      if (p.classList.contains('playing')) return;
-      document.querySelectorAll('.player.playing').forEach(o => { o.querySelector('iframe').remove(); o.classList.remove('playing'); });
+      if (frame.classList.contains('playing')) return;
+      stopAll();
       const f = document.createElement('iframe');
-      f.src = `https://player.vimeo.com/video/${p.dataset.vimeo}?autoplay=1&title=0&byline=0&portrait=0&dnt=1`;
-      f.allow = 'autoplay; fullscreen; picture-in-picture'; f.allowFullscreen = true; f.title = p.getAttribute('aria-label');
-      p.appendChild(f); p.classList.add('playing');
+      f.src = `https://player.vimeo.com/video/${v.id}?autoplay=1&title=0&byline=0&portrait=0&dnt=1`;
+      f.allow = 'autoplay; fullscreen; picture-in-picture'; f.allowFullscreen = true; f.title = v.title;
+      frame.appendChild(f); frame.classList.add('playing');
     };
-    p.addEventListener('click', start);
-    p.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); start(); } });
+    frame.addEventListener('click', start);
+    frame.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); start(); } });
+
+    // 總覽卡片
+    const c = document.createElement('button'); c.className = 'card'; c.type = 'button';
+    c.innerHTML = `<div class="thumb"><div class="backdrop" style="background-image:url('${cover(v, 'sm')}')"></div>
+      <img src="${cover(v, 'sm')}" alt="" loading="lazy"><span class="now-tag">NOW</span><span class="dur">${v.duration}</span></div>
+      <b>${esc(v.title)}</b><small>${esc(v.sub)}</small>`;
+    c.addEventListener('click', () => { go(n); document.querySelector('.stage').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+    grid.appendChild(c);
   });
+  const slides = [...track.children], frames = slides.map(s => s.querySelector('.frame')), cards = [...grid.children];
+
+  // 影片依比例縮放到播放區裡（直式、橫式都完整顯示）
+  const fit = () => slides.forEach((s, n) => {
+    const r = VIDEOS[n].ratio, W = s.clientWidth * .92, H = s.clientHeight * .9;
+    const w = Math.min(W, H * r);
+    frames[n].style.width = w + 'px'; frames[n].style.height = (w / r) + 'px';
+  });
+  fit(); addEventListener('resize', fit);
+
+  function stopAll() { frames.forEach(f => { const i = f.querySelector('iframe'); if (i) i.remove(); f.classList.remove('playing'); }); }
+
+  // 更新下方資訊和總覽
+  let index = -1;
+  function show(n) {
+    if (n === index) return;
+    const first = index === -1; index = n; stopAll();
+    const v = VIDEOS[n];
+    const render = () => {
+      body.innerHTML = `
+        <div class="now-head"><h2>${esc(v.title)}</h2><span class="count">${n + 1} / ${VIDEOS.length}</span></div>
+        <p class="sub">${esc(v.sub)}・${v.duration}</p>
+        <details class="info"${document.querySelector('.info[open]') ? ' open' : ''}>
+          <summary><span>INFO</span><i></i></summary>
+          <div class="info-body">
+            <ul class="meta">${v.meta.map(([k, x]) => `<li><span>${esc(k)}</span><span>${val(x)}</span></li>`).join('')}</ul>
+            <div class="desc">${v.desc ? `<p>${esc(v.desc)}</p>` : '<p class="todo">作品介紹待補（可留空）</p>'}</div>
+          </div>
+        </details>`;
+      body.classList.remove('fade');
+    };
+    if (first) render(); else { body.classList.add('fade'); setTimeout(render, 200); }
+    cards.forEach((c, i) => c.classList.toggle('on', i === n));
+    prevBtn.disabled = n === 0; nextBtn.disabled = n === VIDEOS.length - 1;
+    history.replaceState(null, '', '#' + v.id);
+  }
+  function go(n) {
+    n = Math.max(0, Math.min(VIDEOS.length - 1, n));
+    track.scrollTo({ left: slides[n].offsetLeft, behavior: 'smooth' });
+    show(n);
+  }
+  prevBtn.addEventListener('click', () => go(index - 1));
+  nextBtn.addEventListener('click', () => go(index + 1));
+  addEventListener('keydown', e => {
+    if (e.target.closest('input, textarea')) return;
+    if (e.key === 'ArrowLeft') go(index - 1);
+    if (e.key === 'ArrowRight') go(index + 1);
+  });
+
+  // 手指或觸控板滑動後，判斷停在哪一支
+  let t;
+  track.addEventListener('scroll', () => {
+    clearTimeout(t);
+    t = setTimeout(() => show(Math.round(track.scrollLeft / track.clientWidth)), 90);
+  }, { passive: true });
+
+  // 網址帶有 #影片編號 時，直接打開那一支（方便分享特定影片）
+  const start = Math.max(0, VIDEOS.findIndex(v => '#' + v.id === location.hash));
+  show(start);
+  requestAnimationFrame(() => { track.scrollLeft = slides[start].offsetLeft; });
 </script>
 <script src="js/nav.js"></script>
 </body>

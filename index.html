@@ -74,6 +74,12 @@
     .grid { grid-template-columns: 1fr; gap: 40px; }
     .card .thumb { border-radius: 10px; }
   }
+  /* 很窄的手機：導覽列三個項目也排得下一行 */
+  @media (max-width: 420px) {
+    header { font-size: 11px; letter-spacing: .08em; }
+    header nav { gap: 14px; }
+    header nav a { font-size: 11px; letter-spacing: .08em; }
+  }
 </style>
 </head>
 <body>

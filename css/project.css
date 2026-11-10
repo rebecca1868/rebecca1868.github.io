@@ -166,3 +166,10 @@ section.block > figure:last-of-type { border-bottom-left-radius: var(--r); borde
 .pager { gap: 12px; padding: 0 var(--gutter) 40px; border-top: 0; }
 .pager a, .pager a + a { border: 1px solid var(--line); border-radius: var(--r); }
 @media (max-width: 760px) { :root { --r: 10px; } }
+
+/* 很窄的手機：導覽列三個項目也排得下一行 */
+@media (max-width: 420px) {
+  header { font-size: 11px; letter-spacing: .08em; }
+  header nav { gap: 14px; }
+  header nav a { font-size: 11px; letter-spacing: .08em; }
+}
