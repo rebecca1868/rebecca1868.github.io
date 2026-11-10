@@ -43,15 +43,15 @@
 
   /* ---------- 影片資訊：跟著播放區切換 ---------- */
   .now { padding: 20px 2px 0; }
-  .now-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
   .now h2 { font-family: "Noto Sans TC"; font-weight: 500; font-size: clamp(18px, 2vw, 22px); letter-spacing: .05em; }
-  .now .sub { margin-top: 4px; font-size: 13px; letter-spacing: .1em; color: var(--muted); font-family: "Noto Sans TC"; }
+  .now .sub { display: block; margin-top: 4px; font-size: 13px; letter-spacing: .1em; color: var(--muted); font-family: "Noto Sans TC"; }
   .now-body { transition: opacity .25s ease; }
   .now-body.fade { opacity: 0; }
-  .info { margin-top: 6px; }
-  .info summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 12px; padding: 10px 0; font-size: 12px; letter-spacing: .2em; color: var(--muted); user-select: none; }
+  .info { margin-top: 0; }
+  .info summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding: 0 0 14px; user-select: none; }
+  .info summary .lbl { display: flex; align-items: center; gap: 12px; padding-top: 6px; font-size: 12px; letter-spacing: .2em; color: var(--muted); white-space: nowrap; }
   .info summary::-webkit-details-marker { display: none; }
-  .info summary:hover { color: var(--ink); }
+  .info summary:hover .lbl { color: var(--ink); }
   .info summary i { position: relative; width: 11px; height: 11px; }
   .info summary i::before, .info summary i::after { content: ""; position: absolute; left: 0; top: 5px; width: 11px; height: 1px; background: currentColor; transition: transform .3s ease; }
   .info summary i::after { transform: rotate(90deg); }
@@ -186,10 +186,11 @@
     const v = VIDEOS[n];
     const render = () => {
       body.innerHTML = `
-        <div class="now-head"><h2>${esc(v.title)}</h2></div>
-        <p class="sub">${esc(v.sub)}・${v.duration}</p>
         <details class="info"${document.querySelector('.info[open]') ? ' open' : ''}>
-          <summary><span>INFO</span><i></i></summary>
+          <summary>
+            <span class="t"><h2>${esc(v.title)}</h2><span class="sub">${esc(v.sub)}・${v.duration}</span></span>
+            <span class="lbl">INFO<i></i></span>
+          </summary>
           <div class="info-body">
             <ul class="meta">${v.meta.map(([k, x]) => `<li><span>${esc(k)}</span><span>${val(x)}</span></li>`).join('')}</ul>
             <div class="desc">${v.desc ? `<p>${esc(v.desc)}</p>` : '<p class="todo">作品介紹待補（可留空）</p>'}</div>
