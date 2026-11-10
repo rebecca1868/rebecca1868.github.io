@@ -14,11 +14,22 @@
   /* 沒有刊頭的頁面：導覽列一開始就是實心、跟著頁面捲動 */
   header { position: sticky; }
   /* 分類頁開頭（平面設計、插畫共用）：英文分類名 */
-  .page-title { padding: clamp(48px, 7vw, 96px) var(--gutter) 0; max-width: 1440px; margin: 0 auto; }
+  .page-title { padding: clamp(48px, 7vw, 96px) var(--gutter) 0; max-width: 1440px; margin: 0 auto; display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; }
   .page-title h1 { font-family: "Inter", sans-serif; font-weight: 300; font-size: clamp(28px, 3.2vw, 44px); line-height: 1.15; letter-spacing: .04em; }
 
-  /* 瀑布流：依每張插畫的原比例錯落排列，圓角、較小的間距 */
-  .wall { columns: 2 380px; column-gap: 12px; padding: 40px var(--gutter) 120px; max-width: 1440px; margin: 0 auto; }
+  /* 大小滑桿：往左欄數變多、圖片變小；往右欄數變少、圖片變大 */
+  .zoom { display: flex; align-items: center; gap: 12px; color: var(--muted); padding-bottom: 6px; }
+  .zoom svg { width: 14px; height: 14px; flex: none; }
+  .zoom input { -webkit-appearance: none; appearance: none; width: 120px; height: 20px; background: transparent; cursor: pointer; }
+  .zoom input::-webkit-slider-runnable-track { height: 1px; background: var(--muted); }
+  .zoom input::-moz-range-track { height: 1px; background: var(--muted); }
+  .zoom input::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; margin-top: -5.5px; border-radius: 50%; background: var(--ink); border: 0; transition: transform .2s; }
+  .zoom input::-moz-range-thumb { width: 12px; height: 12px; border-radius: 50%; background: var(--ink); border: 0; }
+  .zoom input:hover::-webkit-slider-thumb { transform: scale(1.25); }
+  .zoom input:focus-visible { outline: 1px solid var(--ink); outline-offset: 4px; }
+  /* 切換欄數時，每張圖平順移到新位置 */
+  ::view-transition-group(*) { animation-duration: .45s; animation-timing-function: cubic-bezier(.2,.7,.2,1); }  /* 瀑布流：依每張插畫的原比例錯落排列，圓角、較小的間距 */
+  .wall { --cols: 2; column-count: var(--cols); column-gap: 12px; padding: 40px var(--gutter) 120px; max-width: 1440px; margin: 0 auto; }
   .tile { break-inside: avoid; margin-bottom: 12px; position: relative; overflow: hidden; border-radius: var(--r); }
   .tile img { transition: transform .8s cubic-bezier(.2,.7,.2,1); }
   /* 滑過去時：整張插畫蒙上一層霧面玻璃，作品名稱清楚浮在中間 */
@@ -38,6 +49,11 @@
     .tile.show figcaption { opacity: 1; }
     .tile figcaption .hint { display: block; }
   }
+  @media (max-width: 760px) {
+    .wall { column-gap: 8px; }
+    .tile { margin-bottom: 8px; }
+    .zoom input { width: 90px; }
+  }
 </style>
 </head>
 <body>
@@ -49,6 +65,11 @@
 
 <section class="page-title">
   <h1>Illustration</h1>
+  <label class="zoom" title="調整圖片大小">
+    <svg viewBox="0 0 14 14" aria-hidden="true"><g fill="currentColor"><rect x="0" y="0" width="4" height="4"/><rect x="5" y="0" width="4" height="4"/><rect x="10" y="0" width="4" height="4"/><rect x="0" y="5" width="4" height="4"/><rect x="5" y="5" width="4" height="4"/><rect x="10" y="5" width="4" height="4"/><rect x="0" y="10" width="4" height="4"/><rect x="5" y="10" width="4" height="4"/><rect x="10" y="10" width="4" height="4"/></g></svg>
+    <input type="range" min="1" step="1" aria-label="圖片大小" autocomplete="off">
+    <svg viewBox="0 0 14 14" aria-hidden="true"><rect x=".5" y=".5" width="13" height="13" rx="1.5" fill="none" stroke="currentColor"/></svg>
+  </label>
 </section>
 
 <section class="wall">
@@ -93,8 +114,32 @@
     });
   }
 </script>
-<script src="js/viewer.js"></script>
-<script src="js/blur-up.js"></script>
+<script>
+  // 大小滑桿：值越大、圖越大（欄數 = 最大欄數 + 1 − 值）；每次打開頁面都從預設大小開始
+  (() => {
+    const wall = document.querySelector('.wall'), range = document.querySelector('.zoom input');
+    const tiles = [...wall.querySelectorAll('.tile')], imgs = tiles.map(t => t.querySelector('img'));
+    const narrow = matchMedia('(max-width: 760px)').matches;
+    const maxCols = narrow ? 3 : 5, cols0 = narrow ? 1 : 2;
+    range.max = maxCols; range.value = maxCols + 1 - cols0;
+    const apply = cols => {
+      wall.style.setProperty('--cols', cols);
+      const vw = Math.ceil(100 / cols);
+      imgs.forEach(i => i.sizes = `${vw}vw`);              // 圖變大時改載清晰的大圖
+    };
+    apply(cols0);
+    let tr = null;
+    range.addEventListener('input', () => {
+      const cols = maxCols + 1 - parseInt(range.value, 10);
+      if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) { apply(cols); return; }
+      if (tr) tr.skipTransition();
+      tiles.forEach((t, i) => t.style.viewTransitionName = 'tile-' + i);
+      tr = document.startViewTransition(() => apply(cols));
+      tr.finished.finally(() => { tiles.forEach(t => t.style.viewTransitionName = ''); tr = null; });
+    });
+  })();
+</script>
+<script src="js/viewer.js"></script><script src="js/blur-up.js"></script>
 <script src="js/nav.js"></script>
 </body>
 </html>
