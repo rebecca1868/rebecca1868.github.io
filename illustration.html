@@ -27,8 +27,11 @@
   .zoom input::-moz-range-thumb { width: 12px; height: 12px; border-radius: 50%; background: var(--ink); border: 0; }
   .zoom input:hover::-webkit-slider-thumb { transform: scale(1.25); }
   .zoom input:focus-visible { outline: 1px solid var(--ink); outline-offset: 4px; }
-  /* 切換欄數時，每張圖平順移到新位置 */
-  ::view-transition-group(*) { animation-duration: .45s; animation-timing-function: cubic-bezier(.2,.7,.2,1); }  /* 瀑布流：依每張插畫的原比例錯落排列，圓角、較小的間距 */
+  /* 切換欄數時，每張圖平順移到新位置：不做淡入淡出（避免新舊兩層疊成殘影），只移動、縮放新的那層 */
+  ::view-transition-group(*.tile) { animation-duration: .45s; animation-timing-function: cubic-bezier(.2,.7,.2,1); }
+  ::view-transition-old(*.tile) { animation: none; opacity: 0; }
+  ::view-transition-new(*.tile) { animation: none; opacity: 1; width: 100%; height: 100%; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }  /* 瀑布流：依每張插畫的原比例錯落排列，圓角、較小的間距 */
   .wall { --cols: 2; column-count: var(--cols); column-gap: 12px; padding: 40px var(--gutter) 120px; max-width: 1440px; margin: 0 auto; }
   .tile { break-inside: avoid; margin-bottom: 12px; position: relative; overflow: hidden; border-radius: var(--r); }
   .tile img { transition: transform .8s cubic-bezier(.2,.7,.2,1); }
@@ -137,9 +140,9 @@
       current = cols;
       if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) { apply(cols); return; }
       if (tr) tr.skipTransition();
-      tiles.forEach((t, i) => t.style.viewTransitionName = 'tile-' + i);
+      tiles.forEach((t, i) => { t.style.viewTransitionName = 'tile-' + i; t.style.viewTransitionClass = 'tile'; });
       tr = document.startViewTransition(() => apply(cols));
-      tr.finished.finally(() => { tiles.forEach(t => t.style.viewTransitionName = ''); tr = null; });
+      tr.finished.finally(() => { tiles.forEach(t => { t.style.viewTransitionName = ''; t.style.viewTransitionClass = ''; }); tr = null; });
     });
     // 放開後，滑桿輕輕滑到最接近的那一格
     range.addEventListener('change', () => {
