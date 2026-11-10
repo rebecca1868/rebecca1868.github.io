@@ -80,7 +80,7 @@
   .card.on .now-tag { display: block; }
   @media (hover: hover) { .card:hover .thumb img { transform: scale(1.04); } }
   .card b { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 12px; font-family: "Noto Sans TC"; font-weight: 500; font-size: 14px; line-height: 1.5; letter-spacing: .04em; }
-  .card small { display: block; margin-top: 2px; font-size: 12px; letter-spacing: .1em; color: var(--muted); font-family: "Noto Sans TC"; }
+  .card small { display: block; margin-top: 10px; font-size: 12px; letter-spacing: .1em; color: var(--muted); font-family: "Noto Sans TC"; }
   @media (max-width: 760px) {
     .info-body { grid-template-columns: 1fr; gap: 16px; }
     .grid { --th: 180px; gap: 20px 10px; }
@@ -158,7 +158,8 @@
     // 總覽卡片
     const c = document.createElement('button'); c.className = 'card'; c.type = 'button'; c.style.setProperty('--ratio', v.ratio);
     c.innerHTML = `<div class="thumb"><img src="${cover(v, 'sm')}" alt="" loading="lazy"><span class="now-tag">NOW</span><span class="dur">${v.duration}</span></div>
-      <b>${esc(v.title)}</b><small>${esc(v.sub)}</small>`;
+      <small>${esc(v.sub)}</small>`;
+    c.setAttribute('aria-label', v.title);
     c.addEventListener('click', () => { go(n); document.querySelector('.stage').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
     grid.appendChild(c);
   });
