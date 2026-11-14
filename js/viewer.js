@@ -1,11 +1,13 @@
 // 圖片瀏覽器：頁面上有 data-viewer 的圖片，點擊後開啟。
-// - 圖片從原位置放大進入、關閉時縮回（支援的瀏覽器使用 View Transitions，其他淡入淡出）
-// - 左右滑動切換（原生捲動吸附）、方向鍵、底部縮圖
-// - 點兩下或按放大鏡放大細看，放大時可以拖曳移動
-// - 觸控往下拉關閉，Esc 關閉
+// - data-viewer：放大時用的圖片網址
+// - data-viewer-extra：同一件作品的其他照片（JSON 陣列，選填）；data-viewer-extra-sm 為對應的小圖
+// - data-viewer-set：同一組的圖片可以互相切換（例如插畫頁全部一組；實體頁每件作品各自一組）
+// - 圖片所在 <figure> 裡的 figcaption 和 .v-info 會顯示在下方
+// 功能：從原位置放大進入、關閉時縮回；左右滑動、方向鍵、底部縮圖；點兩下放大細看；觸控往下拉關閉
 (() => {
   const sources = [...document.querySelectorAll('img[data-viewer]')];
   if (!sources.length) return;
+  const parse = s => { try { return JSON.parse(s || '[]'); } catch (e) { return []; } };
 
   // 建立瀏覽器的結構
   const v = document.createElement('div');
@@ -22,42 +24,60 @@
   const count = v.querySelector('.v-count'), thumbs = v.querySelector('.v-thumbs');
   const zoomBtn = v.querySelector('.v-zoom');
 
-  sources.forEach((src, n) => {
-    const slide = document.createElement('div'); slide.className = 'v-slide';
-    const img = document.createElement('img'); img.alt = src.alt; img.dataset.src = src.dataset.viewer || src.src;
-    slide.appendChild(img); track.appendChild(slide);
-    const t = document.createElement('button'); t.setAttribute('aria-label', `第 ${n + 1} 張`);
-    t.innerHTML = `<img src="${src.currentSrc || src.src}" alt="">`;
-    t.addEventListener('click', () => go(n));
-    thumbs.appendChild(t);
-    src.style.cursor = 'zoom-in';
-    src.addEventListener('click', e => { e.preventDefault(); open(n); });
-  });
-  const slides = [...track.children], slideImgs = slides.map(s => s.firstChild), thumbBtns = [...thumbs.children];
-
+  let slides = [], slideImgs = [], thumbBtns = [], owners = [];   // owners[i]：第 i 張屬於哪張原圖
   let index = 0, isOpen = false;
+
   // 每張圖都縮放到填滿可用空間（保持比例），解析度不同的圖顯示起來一樣大
   const fit = im => {
-    if (!im.naturalWidth || !im.parentElement.clientWidth) return;
+    if (!im.naturalWidth || !im.parentElement || !im.parentElement.clientWidth) return;
     const s = im.parentElement, r = Math.min(s.clientWidth / im.naturalWidth, s.clientHeight / im.naturalHeight);
     im.style.width = Math.floor(im.naturalWidth * r) + 'px'; im.style.height = Math.floor(im.naturalHeight * r) + 'px';
   };
-  slideImgs.forEach(im => im.addEventListener('load', () => fit(im)));
   addEventListener('resize', () => slideImgs.forEach(fit));
   const load = n => { const im = slideImgs[n]; if (im && !im.src) im.src = im.dataset.src; else if (im) fit(im); };
-  const captionOf = n => {
-    const fig = sources[n].closest('figure'), fc = fig && fig.querySelector('figcaption');
-    if (!fc) return sources[n].alt;
-    const c = fc.cloneNode(true); c.querySelectorAll('.hint').forEach(h => h.remove());
-    return c.innerHTML;
+  const captionOf = src => {
+    const fig = src.closest('figure');
+    const fc = fig && fig.querySelector('figcaption'), info = fig && fig.querySelector('.v-info');
+    let html = src.alt;
+    if (fc) { const c = fc.cloneNode(true); c.querySelectorAll('.hint').forEach(h => h.remove()); html = c.innerHTML; }
+    if (info) html += `<div class="v-more">${info.innerHTML}</div>`;
+    return html;
   };
+
+  // 依照被點的那張，組出這次要瀏覽的所有照片
+  function build(src) {
+    const set = src.dataset.viewerSet || 'all';
+    const group = sources.filter(s => (s.dataset.viewerSet || 'all') === set);
+    track.innerHTML = ''; thumbs.innerHTML = '';
+    slides = []; slideImgs = []; thumbBtns = []; owners = [];
+    group.forEach(s => {
+      const big = [s.dataset.viewer || s.src, ...parse(s.dataset.viewerExtra)];
+      const small = [s.currentSrc || s.src, ...parse(s.dataset.viewerExtraSm)];
+      big.forEach((url, k) => {
+        const n = slides.length;
+        const slide = document.createElement('div'); slide.className = 'v-slide';
+        const img = document.createElement('img'); img.alt = s.alt; img.dataset.src = url;
+        img.addEventListener('load', () => fit(img));
+        bindZoom(img);
+        slide.appendChild(img); track.appendChild(slide);
+        const t = document.createElement('button'); t.setAttribute('aria-label', `第 ${n + 1} 張`);
+        t.innerHTML = `<img src="${small[k] || url}" alt="">`;
+        t.addEventListener('click', () => go(n));
+        thumbs.appendChild(t);
+        slides.push(slide); slideImgs.push(img); thumbBtns.push(t); owners.push(s);
+      });
+    });
+    thumbs.style.display = slides.length > 1 ? '' : 'none';
+    return owners.indexOf(src);
+  }
+
   const update = n => {
     index = n;
     slides.forEach((s, i) => s.classList.toggle('current', i === n));
     thumbBtns.forEach((b, i) => b.classList.toggle('on', i === n));
-    thumbBtns[n].scrollIntoView({ inline: 'center', block: 'nearest' });
-    count.textContent = `${n + 1} / ${slides.length}`;
-    cap.innerHTML = captionOf(n);
+    if (thumbBtns[n]) thumbBtns[n].scrollIntoView({ inline: 'center', block: 'nearest' });
+    count.textContent = slides.length > 1 ? `${n + 1} / ${slides.length}` : '';
+    cap.innerHTML = captionOf(owners[n]);
     [n - 1, n, n + 1].forEach(load);
   };
   const go = (n, smooth = true) => {
@@ -91,23 +111,31 @@
     // 保險：瀏覽器若沒能及時跑動畫，直接完成開關，避免卡住
     setTimeout(() => { if (!done) { tr.skipTransition(); run(); clearNames(); } }, 700);
   };
-  function open(n) {
+  function open(src) {
+    const n = build(src);
     load(n);
     const show = () => {
       v.classList.add('open'); isOpen = true; document.body.style.overflow = 'hidden';
       go(n, false);
     };
     const target = slideImgs[n];
-    const run = () => withTransition(show, sources[n], () => target);
-    target.complete && target.naturalWidth ? run() : (target.onload = () => { target.onload = null; run(); }, setTimeout(() => { if (!isOpen) run(); }, 400));
+    let started = false;
+    const run = () => { if (started) return; started = true; withTransition(show, src, () => target); };
+    if (target.complete && target.naturalWidth) run();
+    else { target.addEventListener('load', run, { once: true }); setTimeout(run, 400); }
   }
   function close() {
     if (!isOpen) return;
     unzoom();
+    const owner = owners[index], cur = slideImgs[index];
     const hide = () => { v.classList.remove('open'); isOpen = false; document.body.style.overflow = ''; v.style.opacity = ''; slides[index].style.transform = ''; };
-    sources[index].scrollIntoView({ block: 'nearest' });
-    withTransition(hide, slideImgs[index], () => sources[index]);
+    owner.scrollIntoView({ block: 'nearest' });
+    withTransition(hide, cur, () => owner);
   }
+  sources.forEach(src => {
+    src.style.cursor = 'zoom-in';
+    src.addEventListener('click', e => { e.preventDefault(); open(src); });
+  });
   v.querySelector('.v-close').addEventListener('click', close);
   track.addEventListener('click', e => { if (e.target === track || e.target.classList.contains('v-slide')) close(); });
   addEventListener('keydown', e => {
@@ -118,7 +146,7 @@
   });
 
   // 放大細看：點兩下或按「＋」，放大時可以拖曳移動
-  let zoomed = null, sx = 0, sy = 0, tx = 0, ty = 0, drag = null;
+  let zoomed = null, tx = 0, ty = 0, drag = null;
   function zoomAt(img, cx, cy) {
     const r = img.getBoundingClientRect();
     zoomed = img; tx = (r.left + r.width / 2 - cx) * 1.5; ty = (r.top + r.height / 2 - cy) * 1.5;
@@ -136,7 +164,7 @@
     if (zoomed) { unzoom(); return; }
     const r = slideImgs[index].getBoundingClientRect(); zoomAt(slideImgs[index], r.left + r.width / 2, r.top + r.height / 2);
   });
-  slideImgs.forEach(img => {
+  function bindZoom(img) {
     img.addEventListener('dblclick', e => { zoomed ? unzoom() : zoomAt(img, e.clientX, e.clientY); });
     let lastTap = 0;
     img.addEventListener('touchend', e => {                     // 手機點兩下放大
@@ -154,7 +182,7 @@
       img.style.transform = `translate(${tx}px, ${ty}px) scale(2.5)`;
     });
     img.addEventListener('pointerup', () => { drag = null; img.style.cursor = ''; });
-  });
+  }
 
   // 觸控往下拉關閉：拉動時圖片跟著手指、背景變淡，放開超過門檻就關閉
   let pull = null;

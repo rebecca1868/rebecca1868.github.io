@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>實體 Objects｜REBECCA CHU</title>
+<meta name="description" content="REBECCA CHU 實體作品：團體服、明信片、周邊等。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/project.css">
+<link rel="stylesheet" href="css/viewer.css">
+<style>
+  /* 沒有刊頭的頁面：導覽列一開始就是實心、跟著頁面捲動 */
+  header { position: sticky; }
+  /* 分類頁開頭（平面設計、插畫共用）：英文分類名 */
+  .page-title { padding: clamp(48px, 7vw, 96px) var(--gutter) 0; max-width: 1440px; margin: 0 auto; display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; }
+  .page-title h1 { font-family: "Inter", sans-serif; font-weight: 300; font-size: clamp(28px, 3.2vw, 44px); line-height: 1.15; letter-spacing: .04em; }
+
+  /* 大小滑桿：往左欄數變多、圖片變小；往右欄數變少、圖片變大 */
+  .zoom { display: flex; align-items: center; gap: 12px; color: var(--muted); padding-bottom: 6px; }
+  .zoom svg { width: 14px; height: 14px; flex: none; }
+  .zoom input { -webkit-appearance: none; appearance: none; width: 120px; height: 20px; background: transparent; cursor: pointer; }
+  .zoom input::-webkit-slider-runnable-track { height: 1px; background: var(--muted); }
+  .zoom input::-moz-range-track { height: 1px; background: var(--muted); }
+  .zoom input::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; margin-top: -5.5px; border-radius: 50%; background: var(--ink); border: 0; transition: transform .2s; }
+  .zoom input::-moz-range-thumb { width: 12px; height: 12px; border-radius: 50%; background: var(--ink); border: 0; }
+  .zoom input:hover::-webkit-slider-thumb { transform: scale(1.25); }
+  .zoom input:focus-visible { outline: 1px solid var(--ink); outline-offset: 4px; }
+  /* 切換欄數時，每張圖平順移到新位置：不做淡入淡出（避免新舊兩層疊成殘影），只移動、縮放新的那層 */
+  ::view-transition-group(*.tile) { animation-duration: .45s; animation-timing-function: cubic-bezier(.2,.7,.2,1); }
+  ::view-transition-old(*.tile) { animation: none; opacity: 0; }
+  ::view-transition-new(*.tile) { animation: none; opacity: 1; width: 100%; height: 100%; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }  /* 瀑布流：依每張插畫的原比例錯落排列，圓角、較小的間距 */
+  .wall { --cols: 3; column-count: var(--cols); column-gap: 12px; padding: 40px var(--gutter) 120px; max-width: 1440px; margin: 0 auto; }
+  .tile { break-inside: avoid; margin-bottom: 12px; position: relative; overflow: hidden; border-radius: var(--r); }
+  .tile img { transition: transform .8s cubic-bezier(.2,.7,.2,1); }
+  /* 滑過去時：整張插畫蒙上一層霧面玻璃，作品名稱清楚浮在中間 */
+  .tile figcaption {
+    position: absolute; inset: 0; margin: 0; pointer-events: none;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+    color: var(--ink); font-family: "Noto Sans TC"; font-size: 16px; font-weight: 500; letter-spacing: .12em;
+    background: rgba(245,244,242,.38);
+    -webkit-backdrop-filter: blur(8px) saturate(1.1); backdrop-filter: blur(8px) saturate(1.1);
+    opacity: 0; transition: opacity .5s ease;
+  }
+  .tile figcaption small { font-size: 11px; font-weight: 400; letter-spacing: .2em; color: #5f5d58; }
+  .tile figcaption .hint { display: none; margin-top: 10px; font-size: 11px; font-weight: 400; letter-spacing: .2em; color: #5f5d58; }
+  @media (hover: hover) { .tile:hover figcaption { opacity: 1; } .tile:hover img { transform: scale(1.03); } }
+  /* 觸控裝置沒有「滑過去」：點第一下出現霧面，再點一下放大 */
+  @media (hover: none) {
+    .tile.show figcaption { opacity: 1; }
+    .tile figcaption .hint { display: block; }
+  }
+  /* 有多張照片的作品：右上角顯示張數 */
+  .tile .multi { position: absolute; top: 10px; right: 10px; display: flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: 999px; font-size: 11px; letter-spacing: .06em; color: var(--ink); background: rgba(245,244,242,.8); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); pointer-events: none; }
+  .tile .multi svg { width: 11px; height: 11px; }
+  .v-info { display: none; }
+  @media (max-width: 760px) {
+    .wall { column-gap: 8px; }
+    .tile { margin-bottom: 8px; }
+    .zoom input { width: 90px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="solid">
+  <a class="logo" href="./">REBECCA CHU</a>
+  <nav><a href="./">Graphic<span class="long"> Design</span></a><a href="illustration.html">Illustration</a><a href="motion.html">Motion</a><a href="objects.html" class="active">Objects</a></nav>
+</header>
+
+<section class="page-title">
+  <h1>Objects</h1>
+  <label class="zoom" title="調整圖片大小">
+    <svg viewBox="0 0 14 14" aria-hidden="true"><g fill="currentColor"><rect x="0" y="0" width="4" height="4"/><rect x="5" y="0" width="4" height="4"/><rect x="10" y="0" width="4" height="4"/><rect x="0" y="5" width="4" height="4"/><rect x="5" y="5" width="4" height="4"/><rect x="10" y="5" width="4" height="4"/><rect x="0" y="10" width="4" height="4"/><rect x="5" y="10" width="4" height="4"/><rect x="10" y="10" width="4" height="4"/></g></svg>
+    <input type="range" min="1" step="0.01" aria-label="圖片大小" autocomplete="off">
+    <svg viewBox="0 0 14 14" aria-hidden="true"><rect x=".5" y=".5" width="13" height="13" rx="1.5" fill="none" stroke="currentColor"/></svg>
+  </label>
+</section>
+
+<section class="wall">
+  <!-- tiles:start -->
+  <figure class="tile"><img data-viewer="works/objects/ob-462fa775-1.jpg" data-viewer-set="ob-462fa775" data-viewer-extra='[]' data-viewer-extra-sm='[]' src="works/objects/ob-462fa775-1.jpg" srcset="works/objects/ob-462fa775-1-sm.jpg 800w, works/objects/ob-462fa775-1.jpg 1600w" sizes="34vw" width="1600" height="900" alt="祝好" loading="lazy" decoding="async"><figcaption>祝好<small>2024　賀卡</small></figcaption><div class="v-info"></div></figure>
+  <figure class="tile"><img data-viewer="works/objects/ob-e7054beb-1.jpg" data-viewer-set="ob-e7054beb" data-viewer-extra='["works/objects/ob-e7054beb-2.jpg"]' data-viewer-extra-sm='["works/objects/ob-e7054beb-2-sm.jpg"]' src="works/objects/ob-e7054beb-1.jpg" srcset="works/objects/ob-e7054beb-1-sm.jpg 800w, works/objects/ob-e7054beb-1.jpg 1600w" sizes="34vw" width="1600" height="1600" alt="第三十三屆紀念帆布袋" loading="lazy" decoding="async"><figcaption>第三十三屆紀念帆布袋<small>亞太兒少領袖特會周邊</small></figcaption><div class="v-info"></div><span class="multi"><svg viewBox="0 0 12 12" aria-hidden="true"><rect x="3" y="0.5" width="8.5" height="8.5" rx="1.5" fill="none" stroke="currentColor"/><rect x="0.5" y="3" width="8.5" height="8.5" rx="1.5" fill="rgba(245,244,242,.9)" stroke="currentColor"/></svg>2</span></figure>
+  <figure class="tile"><img data-viewer="works/objects/ob-6bdfb805-1.jpg" data-viewer-set="ob-6bdfb805" data-viewer-extra='[]' data-viewer-extra-sm='[]' src="works/objects/ob-6bdfb805-1.jpg" srcset="works/objects/ob-6bdfb805-1-sm.jpg 800w, works/objects/ob-6bdfb805-1.jpg 1600w" sizes="34vw" width="1600" height="1067" alt="亞太希望工程制服" loading="lazy" decoding="async"><figcaption>亞太希望工程制服<small></small></figcaption><div class="v-info"></div></figure>
+  <!-- tiles:end -->
+</section>
+
+<footer>© 2026 REBECCA CHU</footer>
+
+<script>
+  // 觸控裝置：第一下只顯示霧面和名稱，第二下才交給放大瀏覽（js/viewer.js）
+  if (matchMedia('(hover: none)').matches) {
+    const tiles = [...document.querySelectorAll('.tile')];
+    tiles.forEach(t => {
+      t.querySelector('figcaption').insertAdjacentHTML('beforeend', '<span class="hint">再點一下放大</span>');
+      t.addEventListener('click', e => {
+        if (t.classList.contains('show')) { t.classList.remove('show'); return; }
+        e.stopPropagation(); e.preventDefault();
+        tiles.forEach(x => x.classList.toggle('show', x === t));
+      }, true);
+    });
+  }
+</script>
+<script>
+  // 大小滑桿：值越大、圖越大（欄數 = 最大欄數 + 1 − 值）；每次打開頁面都從預設大小開始
+  (() => {
+    const wall = document.querySelector('.wall'), range = document.querySelector('.zoom input');
+    const tiles = [...wall.querySelectorAll('.tile')], imgs = tiles.map(t => t.querySelector('img'));
+    const narrow = matchMedia('(max-width: 760px)').matches;
+    const maxCols = narrow ? 3 : 5, cols0 = narrow ? 2 : 3;
+    range.max = maxCols; range.value = maxCols + 1 - cols0;
+    const apply = cols => {
+      wall.style.setProperty('--cols', cols);
+      const vw = Math.ceil(100 / cols);
+      imgs.forEach(i => i.sizes = `${vw}vw`);              // 圖變大時改載清晰的大圖
+    };
+    apply(cols0);
+    let tr = null, current = cols0;
+    const colsOf = v => maxCols + 1 - Math.round(v);
+    // 拖動時滑桿連續移動，欄數只在跨過中間點時才切換（欄數沒變就不重跑動畫）
+    range.addEventListener('input', () => {
+      const cols = colsOf(parseFloat(range.value));
+      if (cols === current) return;
+      current = cols;
+      if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) { apply(cols); return; }
+      if (tr) tr.skipTransition();
+      tiles.forEach((t, i) => { t.style.viewTransitionName = 'tile-' + i; t.style.viewTransitionClass = 'tile'; });
+      tr = document.startViewTransition(() => apply(cols));
+      tr.finished.finally(() => { tiles.forEach(t => { t.style.viewTransitionName = ''; t.style.viewTransitionClass = ''; }); tr = null; });
+    });
+    // 放開後，滑桿輕輕滑到最接近的那一格
+    range.addEventListener('change', () => {
+      const from = parseFloat(range.value), to = Math.round(from), t0 = performance.now();
+      const step = now => {
+        const k = Math.min(1, (now - t0) / 180), e = 1 - Math.pow(1 - k, 3);
+        range.value = from + (to - from) * e;
+        if (k < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    });  })();
+</script>
+<script src="js/viewer.js"></script><script src="js/blur-up.js"></script>
+<script src="js/nav.js"></script>
+</body>
+</html>

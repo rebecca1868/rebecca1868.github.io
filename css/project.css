@@ -173,3 +173,9 @@ section.block > figure:last-of-type { border-bottom-left-radius: var(--r); borde
   header nav { gap: 14px; }
   header nav a { font-size: 11px; letter-spacing: .08em; }
 }
+
+/* 很窄的手機：名字一行、分類排在下一行 */
+@media (max-width: 480px) {
+  header { flex-wrap: wrap; row-gap: 10px; }
+  header nav { width: 100%; justify-content: space-between; gap: 0; }
+}

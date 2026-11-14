@@ -44,6 +44,9 @@
 
 /* 名稱 */
 .v-caption { text-align: center; padding: 14px 16px 6px; font-family: "Noto Sans TC"; font-size: 14px; letter-spacing: .1em; color: var(--ink); min-height: 1.5em; }
+/* 實體作品的簡短資訊（品項・用途・製作方式）與相關連結 */
+.v-more { margin-top: 4px; font-size: 12px; letter-spacing: .12em; color: var(--muted); }
+.v-more a { color: var(--ink); border-bottom: 1px solid currentColor; margin-left: 10px; }
 .v-caption small { margin-left: 10px; font-size: 11px; letter-spacing: .18em; color: var(--muted); }
 
 /* 底部縮圖列 */
