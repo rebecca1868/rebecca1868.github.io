@@ -62,12 +62,21 @@
   }
   .tile figcaption small { margin-left: 10px; font-size: 11px; }
   .tile.show figcaption { transform: none; }
-  /* 有第二張照片的作品：滑過去換成第二張 */
-  .tile .alt { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .5s ease, transform .8s cubic-bezier(.2,.7,.2,1); pointer-events: none; }
-  @media (hover: hover) {
-    .tile:hover figcaption { transform: none; }
-    .tile:hover .alt { opacity: 1; transform: scale(1.03); }
-  }  /* 有多張照片的作品：右上角顯示張數 */
+  .tile figcaption { z-index: 2; }
+  @media (hover: hover) { .tile:hover figcaption { transform: none; } }
+  /* 多張照片的作品：卡片裡可以左右滑動，下方小圓點表示第幾張 */
+  .strip { display: flex; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; cursor: grab; }
+  .strip::-webkit-scrollbar { display: none; }
+  .strip.dragging { scroll-snap-type: none; cursor: grabbing; }
+  .strip img { flex: 0 0 100%; width: 100%; height: 100%; object-fit: cover; scroll-snap-align: start; -webkit-user-drag: none; user-select: none; }
+  .has-strip:hover .strip img { transform: none; }
+  .dots { position: absolute; left: 0; right: 0; bottom: 14px; z-index: 1; display: flex; justify-content: center; gap: 6px; pointer-events: none; }
+  .dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.65); box-shadow: 0 0 0 1px rgba(0,0,0,.12); transition: background .3s, transform .3s; }
+  .dots i.on { background: #fff; transform: scale(1.25); }
+  /* 名稱標籤出現時，小圓點往上讓位 */
+  @media (hover: hover) { .has-strip:hover .dots { bottom: 52px; } }
+  .has-strip.show .dots { bottom: 52px; }
+  .dots { transition: bottom .35s ease; }  /* 有多張照片的作品：右上角顯示張數 */
   .tile .multi { position: absolute; top: 10px; right: 10px; display: flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: 999px; font-size: 11px; letter-spacing: .06em; color: var(--ink); background: rgba(245,244,242,.8); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); pointer-events: none; }
   .tile .multi svg { width: 11px; height: 11px; }
   .v-info { display: none; }
@@ -97,7 +106,7 @@
 <section class="wall">
   <!-- tiles:start -->
   <figure class="tile"><img data-viewer="works/objects/ob-462fa775-1.jpg" data-viewer-set="ob-462fa775" data-viewer-extra='[]' data-viewer-extra-sm='[]' src="works/objects/ob-462fa775-1.jpg" srcset="works/objects/ob-462fa775-1-sm.jpg 800w, works/objects/ob-462fa775-1.jpg 1600w" sizes="34vw" width="1600" height="900" alt="祝好" loading="lazy" decoding="async"><figcaption>祝好<small>2024　賀卡</small></figcaption><div class="v-info"><span class="rel">原始插畫：<a href="illustration.html#il-4a644bb0">走走看看</a>、<a href="illustration.html#il-affedf33">飆起</a></span></div></figure>
-  <figure class="tile"><img data-viewer="works/objects/ob-e7054beb-1.jpg" data-viewer-set="ob-e7054beb" data-viewer-extra='["works/objects/ob-e7054beb-2.jpg"]' data-viewer-extra-sm='["works/objects/ob-e7054beb-2-sm.jpg"]' src="works/objects/ob-e7054beb-1.jpg" srcset="works/objects/ob-e7054beb-1-sm.jpg 800w, works/objects/ob-e7054beb-1.jpg 1600w" sizes="34vw" width="1600" height="1600" alt="第三十三屆紀念帆布袋" loading="lazy" decoding="async"><figcaption>第三十三屆紀念帆布袋<small>亞太兒少領袖特會周邊</small></figcaption><img class="alt" src="works/objects/ob-e7054beb-2-sm.jpg" alt="" loading="lazy" decoding="async"><div class="v-info"></div><span class="multi"><svg viewBox="0 0 12 12" aria-hidden="true"><rect x="3" y="0.5" width="8.5" height="8.5" rx="1.5" fill="none" stroke="currentColor"/><rect x="0.5" y="3" width="8.5" height="8.5" rx="1.5" fill="rgba(245,244,242,.9)" stroke="currentColor"/></svg>2</span></figure>
+  <figure class="tile has-strip"><div class="strip" style="aspect-ratio: 1600 / 1600"><img data-viewer="works/objects/ob-e7054beb-1.jpg" data-viewer-set="ob-e7054beb" data-viewer-extra='["works/objects/ob-e7054beb-2.jpg"]' data-viewer-extra-sm='["works/objects/ob-e7054beb-2-sm.jpg"]' src="works/objects/ob-e7054beb-1.jpg" srcset="works/objects/ob-e7054beb-1-sm.jpg 800w, works/objects/ob-e7054beb-1.jpg 1600w" sizes="34vw" width="1600" height="1600" alt="第三十三屆紀念帆布袋" loading="lazy" decoding="async"><img class="more" src="works/objects/ob-e7054beb-2-sm.jpg" alt="" loading="lazy" decoding="async"></div><figcaption>第三十三屆紀念帆布袋<small>亞太兒少領袖特會周邊</small></figcaption><div class="v-info"></div><span class="multi"><svg viewBox="0 0 12 12" aria-hidden="true"><rect x="3" y="0.5" width="8.5" height="8.5" rx="1.5" fill="none" stroke="currentColor"/><rect x="0.5" y="3" width="8.5" height="8.5" rx="1.5" fill="rgba(245,244,242,.9)" stroke="currentColor"/></svg>2</span><div class="dots"><i></i><i></i></div></figure>
   <figure class="tile"><img data-viewer="works/objects/ob-6bdfb805-1.jpg" data-viewer-set="ob-6bdfb805" data-viewer-extra='[]' data-viewer-extra-sm='[]' src="works/objects/ob-6bdfb805-1.jpg" srcset="works/objects/ob-6bdfb805-1-sm.jpg 800w, works/objects/ob-6bdfb805-1.jpg 1600w" sizes="34vw" width="1600" height="1067" alt="亞太希望工程制服" loading="lazy" decoding="async"><figcaption>亞太希望工程制服<small></small></figcaption><div class="v-info"></div></figure>
   <!-- tiles:end -->
 </section>
@@ -155,6 +164,39 @@
       };
       requestAnimationFrame(step);
     });  })();
+</script>
+<script>
+  // 卡片裡的照片列：左右滑動（觸控板、手指、滑鼠拖曳），更新小圓點；輕點則從目前這張打開放大瀏覽
+  document.querySelectorAll('.has-strip').forEach(tile => {
+    const strip = tile.querySelector('.strip'), dots = [...tile.querySelectorAll('.dots i')], cover = strip.querySelector('img[data-viewer]');
+    const cur = () => Math.round(strip.scrollLeft / strip.clientWidth);
+    const mark = () => dots.forEach((d, i) => d.classList.toggle('on', i === cur()));
+    mark(); strip.addEventListener('scroll', mark, { passive: true });
+    let drag = null, moved = false;
+    strip.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse' || e.button) return; drag = { x: e.clientX, left: strip.scrollLeft }; moved = false; });
+    addEventListener('pointermove', e => {
+      if (!drag) return;
+      const dx = e.clientX - drag.x;
+      if (!moved && Math.abs(dx) > 5) { moved = true; strip.classList.add('dragging'); }
+      if (moved) strip.scrollLeft = drag.left - dx;
+    });
+    addEventListener('pointerup', e => {
+      if (!drag) return;
+      const dx = e.clientX - drag.x, start = Math.round(drag.left / strip.clientWidth); drag = null;
+      if (!moved) return;
+      strip.classList.remove('dragging');
+      const to = Math.max(0, Math.min(dots.length - 1, dx < -40 ? start + 1 : dx > 40 ? start - 1 : start));
+      strip.scrollTo({ left: to * strip.clientWidth, behavior: 'smooth' });
+    });
+    strip.addEventListener('dragstart', e => e.preventDefault());
+    // 點擊：拖曳後不算；否則從目前這張打開
+    strip.addEventListener('click', e => {
+      e.preventDefault(); e.stopPropagation();
+      if (moved) { moved = false; return; }
+      tile.classList.remove('show');
+      cover.dispatchEvent(new CustomEvent('viewer:open', { detail: cur() }));
+    }, true);
+  });
 </script>
 <script src="js/viewer.js"></script><script src="js/blur-up.js"></script>
 <script src="js/nav.js"></script>

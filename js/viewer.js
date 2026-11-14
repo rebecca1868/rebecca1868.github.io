@@ -111,8 +111,8 @@
     // 保險：瀏覽器若沒能及時跑動畫，直接完成開關，避免卡住
     setTimeout(() => { if (!done) { tr.skipTransition(); run(); clearNames(); } }, 700);
   };
-  function open(src) {
-    const n = build(src);
+  function open(src, k = 0) {
+    const n = build(src) + k;
     load(n);
     const show = () => {
       v.classList.add('open'); isOpen = true; document.body.style.overflow = 'hidden';
@@ -135,6 +135,8 @@
   sources.forEach(src => {
     src.style.cursor = 'zoom-in';
     src.addEventListener('click', e => { e.preventDefault(); open(src); });
+    // 其他程式可以要求從這件作品的第 k 張開啟（例如卡片裡已經滑到第二張）
+    src.addEventListener('viewer:open', e => open(src, e.detail || 0));
   });
   // 網址帶有 #代號（例如從其他頁的連結過來）時，直接打開那一件
   const h = decodeURIComponent(location.hash.slice(1));
