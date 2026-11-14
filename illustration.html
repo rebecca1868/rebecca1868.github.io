@@ -57,7 +57,11 @@
     .tile { margin-bottom: 8px; }
     .zoom input { width: 90px; }
   }
-  .v-info { display: none; }
+  /* 卡片變窄時，霧面上的名稱跟著縮小，不會超出卡片 */
+  .tile { container-type: inline-size; }
+  .tile figcaption { padding: 0 12px; text-align: center; }
+  @container (max-width: 260px) { .tile figcaption { font-size: 13px; letter-spacing: .06em; } .tile figcaption small { font-size: 10px; letter-spacing: .1em; } }
+  @container (max-width: 180px) { .tile figcaption { font-size: 12px; } .tile figcaption small, .tile figcaption .hint { display: none; } }  .v-info { display: none; }
 </style>
 </head>
 <body>

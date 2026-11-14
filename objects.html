@@ -76,7 +76,22 @@
   /* 名稱標籤出現時，小圓點往上讓位 */
   @media (hover: hover) { .has-strip:hover .dots { bottom: 52px; } }
   .has-strip.show .dots { bottom: 52px; }
-  .dots { transition: bottom .35s ease; }  /* 有多張照片的作品：右上角顯示張數 */
+  @container (max-width: 320px) { .has-strip:hover .dots, .has-strip.show .dots { bottom: 44px; } }
+  @container (max-width: 200px) { .has-strip:hover .dots, .has-strip.show .dots { bottom: 38px; } }
+  .dots { transition: bottom .35s ease; }  /* 名稱標籤跟著卡片寬度縮放：卡片變窄時字變小、超出的字以「…」收尾，太窄就只留名稱 */
+  .tile { container-type: inline-size; }
+  .tile figcaption { max-width: calc(100% - 24px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+  .tile figcaption small { display: inline; }
+  .tile figcaption .hint { display: none !important; }   /* 標籤空間小，不放「再點一下放大」 */
+  @container (max-width: 320px) {
+    .tile figcaption { font-size: 12px; padding: 5px 10px; left: 10px; bottom: 10px; }
+    .tile figcaption small { display: none; }
+    .tile .multi { top: 8px; right: 8px; padding: 2px 7px; font-size: 10px; }
+  }
+  @container (max-width: 200px) {
+    .tile figcaption { font-size: 11px; padding: 4px 8px; left: 8px; bottom: 8px; letter-spacing: .04em; }
+    .dots { bottom: 10px; }
+  }  /* 有多張照片的作品：右上角顯示張數 */
   .tile .multi { position: absolute; top: 10px; right: 10px; display: flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: 999px; font-size: 11px; letter-spacing: .06em; color: var(--ink); background: rgba(245,244,242,.8); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); pointer-events: none; }
   .tile .multi svg { width: 11px; height: 11px; }
   .v-info { display: none; }
