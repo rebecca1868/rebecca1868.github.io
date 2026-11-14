@@ -52,7 +52,22 @@
     .tile.show figcaption { opacity: 1; }
     .tile figcaption .hint { display: block; }
   }
-  /* 有多張照片的作品：右上角顯示張數 */
+  /* ===== 實體頁的滑過效果：不霧化整張圖 ===== */
+  /* 名稱改成左下角的小霧面標籤 */
+  .tile figcaption {
+    inset: auto auto 12px 12px; padding: 6px 12px; border-radius: 999px; gap: 0;
+    flex-direction: row; align-items: baseline; font-size: 13px; letter-spacing: .08em;
+    background: rgba(245,244,242,.78); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    transform: translateY(6px); transition: opacity .35s ease, transform .35s ease;
+  }
+  .tile figcaption small { margin-left: 10px; font-size: 11px; }
+  .tile.show figcaption { transform: none; }
+  /* 有第二張照片的作品：滑過去換成第二張 */
+  .tile .alt { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .5s ease, transform .8s cubic-bezier(.2,.7,.2,1); pointer-events: none; }
+  @media (hover: hover) {
+    .tile:hover figcaption { transform: none; }
+    .tile:hover .alt { opacity: 1; transform: scale(1.03); }
+  }  /* 有多張照片的作品：右上角顯示張數 */
   .tile .multi { position: absolute; top: 10px; right: 10px; display: flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: 999px; font-size: 11px; letter-spacing: .06em; color: var(--ink); background: rgba(245,244,242,.8); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); pointer-events: none; }
   .tile .multi svg { width: 11px; height: 11px; }
   .v-info { display: none; }
@@ -81,8 +96,8 @@
 
 <section class="wall">
   <!-- tiles:start -->
-  <figure class="tile"><img data-viewer="works/objects/ob-462fa775-1.jpg" data-viewer-set="ob-462fa775" data-viewer-extra='[]' data-viewer-extra-sm='[]' src="works/objects/ob-462fa775-1.jpg" srcset="works/objects/ob-462fa775-1-sm.jpg 800w, works/objects/ob-462fa775-1.jpg 1600w" sizes="34vw" width="1600" height="900" alt="祝好" loading="lazy" decoding="async"><figcaption>祝好<small>2024　賀卡</small></figcaption><div class="v-info"></div></figure>
-  <figure class="tile"><img data-viewer="works/objects/ob-e7054beb-1.jpg" data-viewer-set="ob-e7054beb" data-viewer-extra='["works/objects/ob-e7054beb-2.jpg"]' data-viewer-extra-sm='["works/objects/ob-e7054beb-2-sm.jpg"]' src="works/objects/ob-e7054beb-1.jpg" srcset="works/objects/ob-e7054beb-1-sm.jpg 800w, works/objects/ob-e7054beb-1.jpg 1600w" sizes="34vw" width="1600" height="1600" alt="第三十三屆紀念帆布袋" loading="lazy" decoding="async"><figcaption>第三十三屆紀念帆布袋<small>亞太兒少領袖特會周邊</small></figcaption><div class="v-info"></div><span class="multi"><svg viewBox="0 0 12 12" aria-hidden="true"><rect x="3" y="0.5" width="8.5" height="8.5" rx="1.5" fill="none" stroke="currentColor"/><rect x="0.5" y="3" width="8.5" height="8.5" rx="1.5" fill="rgba(245,244,242,.9)" stroke="currentColor"/></svg>2</span></figure>
+  <figure class="tile"><img data-viewer="works/objects/ob-462fa775-1.jpg" data-viewer-set="ob-462fa775" data-viewer-extra='[]' data-viewer-extra-sm='[]' src="works/objects/ob-462fa775-1.jpg" srcset="works/objects/ob-462fa775-1-sm.jpg 800w, works/objects/ob-462fa775-1.jpg 1600w" sizes="34vw" width="1600" height="900" alt="祝好" loading="lazy" decoding="async"><figcaption>祝好<small>2024　賀卡</small></figcaption><div class="v-info"><span class="rel">原始插畫：<a href="illustration.html#il-4a644bb0">走走看看</a>、<a href="illustration.html#il-affedf33">飆起</a></span></div></figure>
+  <figure class="tile"><img data-viewer="works/objects/ob-e7054beb-1.jpg" data-viewer-set="ob-e7054beb" data-viewer-extra='["works/objects/ob-e7054beb-2.jpg"]' data-viewer-extra-sm='["works/objects/ob-e7054beb-2-sm.jpg"]' src="works/objects/ob-e7054beb-1.jpg" srcset="works/objects/ob-e7054beb-1-sm.jpg 800w, works/objects/ob-e7054beb-1.jpg 1600w" sizes="34vw" width="1600" height="1600" alt="第三十三屆紀念帆布袋" loading="lazy" decoding="async"><figcaption>第三十三屆紀念帆布袋<small>亞太兒少領袖特會周邊</small></figcaption><img class="alt" src="works/objects/ob-e7054beb-2-sm.jpg" alt="" loading="lazy" decoding="async"><div class="v-info"></div><span class="multi"><svg viewBox="0 0 12 12" aria-hidden="true"><rect x="3" y="0.5" width="8.5" height="8.5" rx="1.5" fill="none" stroke="currentColor"/><rect x="0.5" y="3" width="8.5" height="8.5" rx="1.5" fill="rgba(245,244,242,.9)" stroke="currentColor"/></svg>2</span></figure>
   <figure class="tile"><img data-viewer="works/objects/ob-6bdfb805-1.jpg" data-viewer-set="ob-6bdfb805" data-viewer-extra='[]' data-viewer-extra-sm='[]' src="works/objects/ob-6bdfb805-1.jpg" srcset="works/objects/ob-6bdfb805-1-sm.jpg 800w, works/objects/ob-6bdfb805-1.jpg 1600w" sizes="34vw" width="1600" height="1067" alt="亞太希望工程制服" loading="lazy" decoding="async"><figcaption>亞太希望工程制服<small></small></figcaption><div class="v-info"></div></figure>
   <!-- tiles:end -->
 </section>

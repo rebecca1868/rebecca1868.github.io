@@ -136,6 +136,12 @@
     src.style.cursor = 'zoom-in';
     src.addEventListener('click', e => { e.preventDefault(); open(src); });
   });
+  // 網址帶有 #代號（例如從其他頁的連結過來）時，直接打開那一件
+  const h = decodeURIComponent(location.hash.slice(1));
+  if (h) {
+    const target = sources.find(s => s.dataset.viewerSet === h || (s.dataset.viewer || '').includes('/' + h + '.'));
+    if (target) addEventListener('load', () => { target.scrollIntoView({ block: 'center' }); setTimeout(() => open(target), 300); });
+  }
   v.querySelector('.v-close').addEventListener('click', close);
   track.addEventListener('click', e => { if (e.target === track || e.target.classList.contains('v-slide')) close(); });
   addEventListener('keydown', e => {
