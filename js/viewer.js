@@ -30,7 +30,11 @@
   // 每張圖都縮放到填滿可用空間（保持比例），解析度不同的圖顯示起來一樣大
   const fit = im => {
     if (!im.naturalWidth || !im.parentElement || !im.parentElement.clientWidth) return;
-    const s = im.parentElement, r = Math.min(s.clientWidth / im.naturalWidth, s.clientHeight / im.naturalHeight);
+    // 扣掉外框留給陰影的空間，陰影才不會被切掉
+    const s = im.parentElement, cs = getComputedStyle(s);
+    const w = s.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+    const h = s.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    const r = Math.min(w / im.naturalWidth, h / im.naturalHeight);
     im.style.width = Math.floor(im.naturalWidth * r) + 'px'; im.style.height = Math.floor(im.naturalHeight * r) + 'px';
   };
   addEventListener('resize', () => slideImgs.forEach(fit));
