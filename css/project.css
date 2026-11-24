@@ -179,3 +179,6 @@ section.block > figure:last-of-type { border-bottom-left-radius: var(--r); borde
   header { flex-wrap: wrap; row-gap: 10px; }
   header nav { width: 100%; justify-content: space-between; gap: 0; }
 }
+
+/* 介紹欄位裡的連結（例如活動影片） */
+.meta a { border-bottom: 1px solid currentColor; }
