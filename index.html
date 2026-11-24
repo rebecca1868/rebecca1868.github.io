@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>REBECCA CHU｜平面設計作品集</title>
-<meta name="description" content="REBECCA CHU 平面設計作品集：海報、DM、書籍封面與社群視覺。">
+<title>REBECCA CHU｜作品集</title>
+<meta name="description" content="REBECCA CHU 作品集：平面設計、插畫、動態影像與實體作品。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
@@ -15,8 +15,10 @@
     --muted: #8a8780;
     --line: #dcdad5;
     --gutter: clamp(16px, 5vw, 72px);
+    --r: 14px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
   body {
     background: var(--bg); color: var(--ink);
     font-family: "Inter", "Noto Sans TC", sans-serif; line-height: 1.8;
@@ -25,7 +27,7 @@
   a { color: inherit; text-decoration: none; }
   img { display: block; width: 100%; height: auto; }
   .img-wait { position: relative; background-color: #e9e7e3; }
-  .img-wait > img { opacity: 0; transition: opacity .6s ease; }
+  .img-wait > img { opacity: 0; transition: opacity .6s ease, transform 1.2s cubic-bezier(.2,.7,.2,1); }
   .img-wait > img.loaded { opacity: 1; }
   .img-wait::after { content: ""; position: absolute; left: 50%; top: 50%; width: 56px; height: 1px; margin-left: -28px; background: #8a8780; transform-origin: left; animation: imgLoading 1.4s ease-in-out infinite; transition: opacity .3s; }
   .img-wait.done::after { opacity: 0; animation: none; }
@@ -40,50 +42,94 @@
   header .logo { font-weight: 600; }
   header nav { display: flex; gap: 32px; }
   header nav a { position: relative; padding: 4px 0; font-family: "Inter", sans-serif; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; }
-  header nav a .en { font-family: "Inter"; font-weight: 300; font-size: 11px; letter-spacing: .14em; margin-left: 6px; opacity: .6; }
   header nav a::after { content: ""; position: absolute; left: 0; right: 0; bottom: -2px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform .35s ease; }
   header nav a:hover::after, header nav a.active::after { transform: scaleX(1); }
   header { transition: transform .4s cubic-bezier(.2,.7,.2,1); }
   header.nav-hidden { transform: translateY(-100%); }
 
-  /* 分類頁開頭（平面設計、插畫共用）：大字英文分類名 → 中文名＋說明 → 深色長線＋作品數量 */
-  .page-title { padding: clamp(48px, 7vw, 96px) var(--gutter) 0; max-width: 1440px; margin: 0 auto; }
-  .page-title h1 { font-family: "Inter", sans-serif; font-weight: 300; font-size: clamp(28px, 3.2vw, 44px); line-height: 1.15; letter-spacing: .04em; }
-  .page-title .sub { margin-top: 12px; font-family: "Noto Sans TC"; font-size: 15px; color: var(--muted); letter-spacing: .1em; }
-  .page-title .sub b { color: var(--ink); font-weight: 500; margin-right: 14px; }
-  /* 作品列表 */
-  .works { padding: 40px var(--gutter) 120px; max-width: 1440px; margin: 0 auto; }
-  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 56px 40px; }
-  .card .thumb { overflow: hidden; background: #ddd; border-radius: 14px; }
-  .card .thumb img { aspect-ratio: 4 / 3; object-fit: cover; transition: transform 1.2s cubic-bezier(.2,.7,.2,1); }
-  .card:hover .thumb img { transform: scale(1.04); }
-  .card h2 { margin-top: 18px; font-family: "Noto Sans TC"; font-weight: 500; font-size: 18px; letter-spacing: .04em; }
-  .card h2 span { font-family: "Inter"; font-weight: 300; color: var(--muted); font-size: 14px; letter-spacing: .1em; margin-left: 10px; }
-  .card p { font-size: 13px; color: var(--muted); font-family: "Noto Sans TC"; }
-  .soon { aspect-ratio: 4 / 3; border: 1px dashed var(--line); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 13px; letter-spacing: .2em; }
+  /* 開場（A 版才顯示，B 版一打開直接是作品） */
+  .intro { display: none; min-height: calc(100vh - 70px); padding: 0 var(--gutter); max-width: 1440px; margin: 0 auto; flex-direction: column; justify-content: flex-end; padding-bottom: 9vh; }
+  .with-intro .intro { display: flex; }
+  .intro h1 { font-family: "Inter", sans-serif; font-weight: 300; font-size: clamp(48px, 11vw, 168px); line-height: .95; letter-spacing: .01em; }
+  .intro p { margin-top: 22px; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+
+  /* 每一區：左邊分類名稱、右邊「看全部」 */
+  main { max-width: 1440px; margin: 0 auto; padding: 0 var(--gutter); }
+  .sec { padding-top: clamp(40px, 6vw, 88px); scroll-margin-top: 60px; }
+  .sec-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 22px; }
+  .sec-head h2 { font-family: "Inter", sans-serif; font-weight: 300; font-size: clamp(22px, 2.2vw, 30px); letter-spacing: .04em; }
+  .sec-head a { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); transition: color .2s; white-space: nowrap; }
+  .sec-head a:hover { color: var(--ink); }
+
+  /* 縮圖共用 */
+  .thumb { overflow: hidden; border-radius: var(--r); }
+  .item:hover .thumb img, .card:hover .thumb img { transform: scale(1.04); }
+  .cap { display: block; margin-top: 12px; font-family: "Noto Sans TC"; font-size: 14px; font-weight: 500; letter-spacing: .04em; line-height: 1.5; }
+  .cap small { display: block; margin-top: 2px; font-weight: 400; font-size: 12px; color: var(--muted); letter-spacing: .08em; }
+
+  /* 平面：兩張大卡片 */
+  .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
+  .card .thumb img { aspect-ratio: 4 / 3; object-fit: cover; }
+  .card .cap { margin-top: 16px; font-size: 17px; }
+
+  /* 等高排列：同一排的圖片高度一致、保留原本比例（寬度依比例分配） */
+  .row { display: flex; gap: 16px; }
+  .row + .row { margin-top: 16px; }
+  .row .item { flex: var(--k) 1 0; min-width: 0; }
+  .row .thumb { aspect-ratio: var(--ar); }
+  .row .thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* 影片：右下角片長 */
+  .video .thumb { position: relative; }
+  .video .dur { position: absolute; right: 8px; bottom: 8px; z-index: 1; padding: 1px 7px; border-radius: 6px; background: rgba(29,29,27,.72); color: #fff; font-size: 11px; letter-spacing: .06em; }
+  .video .play { position: absolute; left: 50%; top: 50%; z-index: 1; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 50%; background: rgba(245,244,242,.78); backdrop-filter: blur(6px); opacity: 0; transform: scale(.9); transition: opacity .3s, transform .3s; }
+  .video .play::before { content: ""; position: absolute; left: 18px; top: 14px; border-left: 12px solid var(--ink); border-top: 8px solid transparent; border-bottom: 8px solid transparent; }
+  .video:hover .play { opacity: 1; transform: none; }
+
+  /* 聯絡 */
+  .contact { padding-bottom: clamp(72px, 10vw, 140px); }
+  .contact ul { list-style: none; border-top: 1px solid var(--line); }
+  .contact li { border-bottom: 1px solid var(--line); }
+  .contact li a { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 22px 0; transition: padding .35s cubic-bezier(.2,.7,.2,1); }
+  .contact li a:hover { padding-left: 10px; }
+  .contact .k { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); min-width: 90px; }
+  .contact .v { font-weight: 300; font-size: clamp(18px, 2.6vw, 34px); letter-spacing: .02em; overflow-wrap: anywhere; text-align: right; }
+  .contact .v::after { content: " ↗"; font-size: .6em; color: var(--muted); }
 
   footer { padding: 32px var(--gutter); font-size: 12px; color: var(--muted); letter-spacing: .1em; border-top: 1px solid var(--line); }
 
   @media (max-width: 760px) {
+    :root { --r: 10px; }
     header { padding: 16px var(--gutter); font-size: 12px; }
-    header nav .en { display: none; }
     header nav { gap: 24px; }
     header nav a { white-space: nowrap; letter-spacing: .12em; }
     header nav .long { display: none; }
     header .logo { white-space: nowrap; }
-    .grid { grid-template-columns: 1fr; gap: 40px; }
-    .card .thumb { border-radius: 10px; }
+    .cards { grid-template-columns: 1fr; gap: 32px; }
+    .row { gap: 10px; }
+    .row + .row { margin-top: 10px; }
+    .cap { font-size: 13px; margin-top: 8px; }
+    .cap small { font-size: 11px; }
+    /* 影片：三支直式一排，橫式自己一排 */
+    .row.videos { flex-wrap: wrap; }
+    .row.videos .item { flex: 0 0 calc((100% - 20px) / 3); }
+    .row.videos .item.wide { flex-basis: 100%; }
+    /* 實體：一件一排 */
+    .row.objects { flex-direction: column; gap: 28px; }
+    .row.objects .item { flex: none; }
+    .contact .k { min-width: 0; }
   }
-  /* 很窄的手機：導覽列三個項目也排得下一行 */
   @media (max-width: 420px) {
     header { font-size: 11px; letter-spacing: .08em; }
     header nav { gap: 14px; }
     header nav a { font-size: 11px; letter-spacing: .08em; }
   }
-  /* 很窄的手機：名字一行、分類排在下一行 */
   @media (max-width: 480px) {
     header { flex-wrap: wrap; row-gap: 10px; }
     header nav { width: 100%; justify-content: space-between; gap: 0; }
+  }
+  @media (max-width: 370px) {
+    header nav a { font-size: 10px; letter-spacing: .05em; }
   }
 </style>
 </head>
@@ -91,29 +137,83 @@
 
 <header>
   <a class="logo" href="./">REBECCA CHU</a>
-  <nav><a href="./" class="active">Graphic<span class="long"> Design</span></a><a href="illustration.html">Illustration</a><a href="motion.html">Motion</a><a href="objects.html">Objects</a></nav>
+  <nav><a href="graphic.html">Graphic<span class="long"> Design</span></a><a href="illustration.html">Illustration</a><a href="motion.html">Motion</a><a href="objects.html">Objects</a><a href="#contact">Contact</a></nav>
 </header>
 
-<section class="page-title">
-  <h1>Graphic Design</h1>
+<section class="intro">
+  <h1>REBECCA<br>CHU</h1>
+  <p>Graphic Design ・ Illustration ・ Motion ・ Objects</p>
 </section>
 
-<section class="works" id="works">
-  <div class="grid">
-    <a class="card" href="speak-truth.html">
-      <div class="thumb"><img src="works/speak-truth/hero-sm.jpg" srcset="works/speak-truth/hero-sm.jpg 1000w, works/speak-truth/hero.jpg 2000w" sizes="(max-width: 760px) 92vw, 45vw" width="2000" height="1333" alt="啟示錄・說真話"></div>
-      <h2>啟示錄・說真話</h2>
-      <p>書冊封面／活動視覺　2025</p>
-    </a>
-    <a class="card" href="critical-facts.html">
-      <div class="thumb"><img src="works/critical-facts/hero-sm.jpg" srcset="works/critical-facts/hero-sm.jpg 1000w, works/critical-facts/hero.jpg 2000w" sizes="(max-width: 760px) 92vw, 45vw" width="2000" height="848" alt="關鍵事實 Critical Facts"></div>
-      <h2>關鍵事實<span>CRITICAL FACTS</span></h2>
-      <p>海報／活動視覺　2024</p>
-    </a>
-  </div>
-</section>
+<main>
+
+  <section class="sec" id="graphic">
+    <div class="sec-head"><h2>Graphic Design</h2><a href="graphic.html">View all →</a></div>
+    <div class="cards">
+      <a class="card" href="speak-truth.html">
+        <div class="thumb"><img src="works/speak-truth/hero-sm.jpg" srcset="works/speak-truth/hero-sm.jpg 1000w, works/speak-truth/hero.jpg 2000w" sizes="(max-width: 760px) 92vw, 45vw" width="2000" height="1333" alt="啟示錄・說真話"></div>
+        <span class="cap">啟示錄・說真話<small>書冊封面／活動視覺　2025</small></span>
+      </a>
+      <a class="card" href="critical-facts.html">
+        <div class="thumb"><img src="works/critical-facts/hero-sm.jpg" srcset="works/critical-facts/hero-sm.jpg 1000w, works/critical-facts/hero.jpg 2000w" sizes="(max-width: 760px) 92vw, 45vw" width="2000" height="848" alt="關鍵事實 Critical Facts"></div>
+        <span class="cap">關鍵事實 Critical Facts<small>海報／活動視覺　2024</small></span>
+      </a>
+    </div>
+  </section>
+
+  <section class="sec" id="illustration">
+    <div class="sec-head"><h2>Illustration</h2><a href="illustration.html">View all →</a></div>
+    <div class="row">
+      <a class="item" href="illustration.html#il-4a644bb0" style="--k:1.41; --ar:1600/1135"><div class="thumb"><img src="works/illustration/il-4a644bb0-sm.jpg" alt="走走看看" loading="lazy" decoding="async"></div></a>
+      <a class="item" href="illustration.html#il-c62c7852" style="--k:.707; --ar:1131/1600"><div class="thumb"><img src="works/illustration/il-c62c7852-sm.jpg" alt="這是小寫a" loading="lazy" decoding="async"></div></a>
+      <a class="item" href="illustration.html#il-46255873" style="--k:1; --ar:1/1"><div class="thumb"><img src="works/illustration/il-46255873-sm.jpg" alt="Hi! 好久不見" loading="lazy" decoding="async"></div></a>
+    </div>
+    <div class="row">
+      <a class="item" href="illustration.html#il-e2b97708" style="--k:.8; --ar:1280/1600"><div class="thumb"><img src="works/illustration/il-e2b97708-sm.jpg" alt="拍謝哩工蝦" loading="lazy" decoding="async"></div></a>
+      <a class="item" href="illustration.html#il-9cd206b6" style="--k:1; --ar:1/1"><div class="thumb"><img src="works/illustration/il-9cd206b6-sm.jpg" alt="墜" loading="lazy" decoding="async"></div></a>
+      <a class="item" href="illustration.html#il-68f68974" style="--k:1.41; --ar:1600/1136"><div class="thumb"><img src="works/illustration/il-68f68974-sm.jpg" alt="樹洞一號" loading="lazy" decoding="async"></div></a>
+    </div>
+  </section>
+
+  <section class="sec" id="motion">
+    <div class="sec-head"><h2>Motion</h2><a href="motion.html">View all →</a></div>
+    <div class="row videos">
+      <a class="item video" href="motion.html#1245437306" style="--k:.5625; --ar:384/683"><div class="thumb"><img src="works/motion/v-1245437306-sm.jpg" alt="2027 更大的敘事 EP01" loading="lazy" decoding="async"><span class="play"></span><span class="dur">0:45</span></div><span class="cap">更大的敘事 EP01</span></a>
+      <a class="item video" href="motion.html#1245437307" style="--k:.5625; --ar:384/683"><div class="thumb"><img src="works/motion/v-1245437307-sm.jpg" alt="2027 更大的敘事 EP02" loading="lazy" decoding="async"><span class="play"></span><span class="dur">1:00</span></div><span class="cap">更大的敘事 EP02</span></a>
+      <a class="item video" href="motion.html#1248293295" style="--k:.5625; --ar:384/683"><div class="thumb"><img src="works/motion/v-1248293295-sm.jpg" alt="2027 更大的敘事 EP03" loading="lazy" decoding="async"><span class="play"></span><span class="dur">0:54</span></div><span class="cap">更大的敘事 EP03</span></a>
+      <a class="item video wide" href="motion.html#427283787" style="--k:1.778; --ar:16/9"><div class="thumb"><img src="works/motion/v-427283787.jpg" alt="Hey Brother" loading="lazy" decoding="async"><span class="play"></span><span class="dur">1:13</span></div><span class="cap">Hey Brother</span></a>
+    </div>
+  </section>
+
+  <section class="sec" id="objects">
+    <div class="sec-head"><h2>Objects</h2><a href="objects.html">View all →</a></div>
+    <div class="row objects">
+      <a class="item" href="objects.html#ob-462fa775" style="--k:1.778; --ar:16/9"><div class="thumb"><img src="works/objects/ob-462fa775-1-sm.jpg" alt="祝好" loading="lazy" decoding="async"></div><span class="cap">祝好<small>2024　賀卡</small></span></a>
+      <a class="item" href="objects.html#ob-e7054beb" style="--k:1; --ar:1/1"><div class="thumb"><img src="works/objects/ob-e7054beb-1-sm.jpg" alt="第三十三屆紀念帆布袋" loading="lazy" decoding="async"></div><span class="cap">第三十三屆紀念帆布袋<small>亞太兒少領袖特會周邊</small></span></a>
+      <a class="item" href="objects.html#ob-6bdfb805" style="--k:1.5; --ar:1600/1067"><div class="thumb"><img src="works/objects/ob-6bdfb805-1-sm.jpg" alt="亞太希望工程制服" loading="lazy" decoding="async"></div><span class="cap">亞太希望工程制服</span></a>
+    </div>
+  </section>
+
+  <section class="sec contact" id="contact">
+    <div class="sec-head"><h2>Contact</h2></div>
+    <ul>
+      <li><a class="mail" href="#contact"><span class="k">Email</span><span class="v" data-u="rebecca.c.1868" data-d="gmail.com">rebecca.c.1868 [at] gmail.com</span></a></li>
+      <li><a href="https://www.instagram.com/shhxuan_1868/" target="_blank" rel="noopener"><span class="k">Instagram</span><span class="v">@shhxuan_1868</span></a></li>
+    </ul>
+  </section>
+
+</main>
 
 <footer>© 2026 REBECCA CHU</footer>
+<script>
+  // 信箱在頁面原始碼裡拆開寫，減少被自動程式收集；畫面上組回完整的信箱並可點擊寄信
+  document.querySelectorAll('.mail').forEach(a => {
+    const v = a.querySelector('.v'), addr = v.dataset.u + '@' + v.dataset.d;
+    v.textContent = addr; a.href = 'mailto:' + addr;
+  });
+  // 預覽用：網址加上 ?intro=1 顯示 A 版開場
+  if (new URLSearchParams(location.search).get('intro') === '1') document.body.classList.add('with-intro');
+</script>
 <script src="js/blur-up.js"></script>
 <script src="js/nav.js"></script>
 </body>
