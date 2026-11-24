@@ -47,12 +47,6 @@
   header { transition: transform .4s cubic-bezier(.2,.7,.2,1); }
   header.nav-hidden { transform: translateY(-100%); }
 
-  /* 開場（A 版才顯示，B 版一打開直接是作品） */
-  .intro { display: none; min-height: calc(100vh - 70px); padding: 0 var(--gutter); max-width: 1440px; margin: 0 auto; flex-direction: column; justify-content: flex-end; padding-bottom: 9vh; }
-  .with-intro .intro { display: flex; }
-  .intro h1 { font-family: "Inter", sans-serif; font-weight: 300; font-size: clamp(48px, 11vw, 168px); line-height: .95; letter-spacing: .01em; }
-  .intro p { margin-top: 22px; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
-
   /* 每一區：左邊分類名稱、右邊「看全部」 */
   main { max-width: 1440px; margin: 0 auto; padding: 0 var(--gutter); }
   .sec { padding-top: clamp(40px, 6vw, 88px); scroll-margin-top: 60px; }
@@ -86,16 +80,15 @@
   .video .play::before { content: ""; position: absolute; left: 18px; top: 14px; border-left: 12px solid var(--ink); border-top: 8px solid transparent; border-bottom: 8px solid transparent; }
   .video:hover .play { opacity: 1; transform: none; }
 
-  /* 聯絡 */
+  /* 聯絡：兩張單行小卡片（圖示＋內容＋↗） */
   .contact { padding-bottom: clamp(72px, 10vw, 140px); }
-  .contact ul { list-style: none; border-top: 1px solid var(--line); }
-  .contact li { border-bottom: 1px solid var(--line); }
-  .contact li a { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 22px 0; transition: padding .35s cubic-bezier(.2,.7,.2,1); }
-  .contact li a:hover { padding-left: 10px; }
-  .contact .k { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); min-width: 90px; }
-  .contact .v { font-weight: 300; font-size: clamp(18px, 2.6vw, 34px); letter-spacing: .02em; overflow-wrap: anywhere; text-align: right; }
-  .contact .v::after { content: " ↗"; font-size: .6em; color: var(--muted); }
-
+  .contact-links { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .contact-links a { display: flex; align-items: center; gap: 14px; padding: 18px 22px; border-radius: var(--r); background: rgba(255,255,255,.55); border: 1px solid rgba(29,29,27,.06); transition: background .3s, transform .4s cubic-bezier(.2,.7,.2,1); }
+  .contact-links a:hover { background: #fff; transform: translateY(-3px); }
+  .contact-links svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.3; }
+  .contact-links .v { flex: 1; min-width: 0; font-size: 15px; letter-spacing: .03em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .contact-links i { flex: none; font-style: normal; color: var(--muted); transition: transform .3s, color .3s; }
+  .contact-links a:hover i { transform: translate(2px, -2px); color: var(--ink); }
   footer { padding: 32px var(--gutter); font-size: 12px; color: var(--muted); letter-spacing: .1em; border-top: 1px solid var(--line); }
 
   @media (max-width: 760px) {
@@ -117,7 +110,7 @@
     /* 實體：一件一排 */
     .row.objects { flex-direction: column; gap: 28px; }
     .row.objects .item { flex: none; }
-    .contact .k { min-width: 0; }
+    .contact-links { grid-template-columns: 1fr; gap: 10px; }
   }
   @media (max-width: 420px) {
     header { font-size: 11px; letter-spacing: .08em; }
@@ -139,11 +132,6 @@
   <a class="logo" href="./">REBECCA CHU</a>
   <nav><a href="graphic.html">Graphic<span class="long"> Design</span></a><a href="illustration.html">Illustration</a><a href="motion.html">Motion</a><a href="objects.html">Objects</a><a href="#contact">Contact</a></nav>
 </header>
-
-<section class="intro">
-  <h1>REBECCA<br>CHU</h1>
-  <p>Graphic Design ・ Illustration ・ Motion ・ Objects</p>
-</section>
 
 <main>
 
@@ -196,12 +184,11 @@
 
   <section class="sec contact" id="contact">
     <div class="sec-head"><h2>Contact</h2></div>
-    <ul>
-      <li><a class="mail" href="#contact"><span class="k">Email</span><span class="v" data-u="rebecca.c.1868" data-d="gmail.com">rebecca.c.1868 [at] gmail.com</span></a></li>
-      <li><a href="https://www.instagram.com/shhxuan_1868/" target="_blank" rel="noopener"><span class="k">Instagram</span><span class="v">@shhxuan_1868</span></a></li>
-    </ul>
+    <div class="contact-links">
+      <a class="mail" href="#contact" aria-label="Email"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 6.5 12 13l8.5-6.5"/></svg><span class="v" data-u="rebecca.c.1868" data-d="gmail.com">rebecca.c.1868 [at] gmail.com</span><i>↗</i></a>
+      <a href="https://www.instagram.com/shhxuan_1868/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r=".6" fill="currentColor"/></svg><span class="v">@shhxuan_1868</span><i>↗</i></a>
+    </div>
   </section>
-
 </main>
 
 <footer>© 2026 REBECCA CHU</footer>
@@ -211,8 +198,6 @@
     const v = a.querySelector('.v'), addr = v.dataset.u + '@' + v.dataset.d;
     v.textContent = addr; a.href = 'mailto:' + addr;
   });
-  // 預覽用：網址加上 ?intro=1 顯示 A 版開場
-  if (new URLSearchParams(location.search).get('intro') === '1') document.body.classList.add('with-intro');
 </script>
 <script src="js/blur-up.js"></script>
 <script src="js/nav.js"></script>
